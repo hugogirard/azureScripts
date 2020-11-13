@@ -1,0 +1,26 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- master
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  spConnection: SpDevOps
+
+jobs:
+  - job: Bicep
+    displayName: Compile Bicep
+    steps:      
+    - script: |
+        curl -Lo bicep https://github.com/Azure/bicep/releases/latest/download/bicep-linux-x64
+        chmod +x ./bicep
+        sudo mv ./bicep /usr/local/bin/bicep
+        /usr/local/bin/bicep/bicep build bicep/aks/main.bicep
+        mkdir outputs
+        mv bicep/aks/main.json outputs/main.json
+        mv bicep/aks/parameters/main.parameters.json outputs/main.parameters.json
