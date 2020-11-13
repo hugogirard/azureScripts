@@ -26,11 +26,6 @@ jobs:
           creds: ${{ secrets.SP_AZURE_CREDENTIALS }}          
           enable-AzPSSession: false
           
-      # Compile bicep files
-      - name: Compile bicep files
-        run: |
-          bicep build bicep/aks/*.bicep          
-          
       # Install bicep compiler
       - name: Install Bicep compiler
         run: |
