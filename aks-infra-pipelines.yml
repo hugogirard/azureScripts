@@ -1,0 +1,26 @@
+# Deploy private cluster using ARM template
+
+trigger:
+- master
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  location: eastus
+  resourceGroupName: 'aks-demo-rg'
+  sp: 'SpDevOps'
+  
+steps:
+  - task: AzureResourceManagerTemplateDeployment@3
+    inputs:
+      deploymentScope: 'Resource Group'
+      azureResourceManagerConnection: $(sp)
+      subscriptionId: $(subscriptionId)
+      action: 'Create Or Update Resource Group'
+      resourceGroupName: '$(resourceGroupName)'
+      location: '$(location)'
+      templateLocation: 'Linked artifact'
+      csmFile: '/bicep/aks/main.json'
+      csmParametersFile: '/bicep/aks/parameters/main.parameters.json'
+      deploymentMode: 'Incremental'
