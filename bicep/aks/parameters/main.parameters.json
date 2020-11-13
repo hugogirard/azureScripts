@@ -1,0 +1,24 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "value": "eastus" 
+        },
+        "addressPrefixHub": {
+            "value": "10.42.0.0/16" 
+        },
+        "addressPrefixSpoke": {
+            "value": "11.0.0.0/8"
+        },
+        "addressPrefixSubnetFw": {
+            "value": "10.42.1.0/24"
+        },
+        "addressJumpboxSubnet": {
+            "value": "10.42.2.0/27"
+        },
+        "addressPrefixSubnetAks": {
+            "value": "11.0.0.0/16"
+        }
+    }
+}

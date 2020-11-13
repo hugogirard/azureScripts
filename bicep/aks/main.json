@@ -1,0 +1,172 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "type": "string"
+    },
+    "addressPrefixHub": {
+      "type": "string"
+    },
+    "addressPrefixSpoke": {
+      "type": "string"
+    },
+    "addressPrefixSubnetFw": {
+      "type": "string"
+    },
+    "addressJumpboxSubnet": {
+      "type": "string"
+    },
+    "addressPrefixSubnetAks": {
+      "type": "string"
+    }
+  },
+  "functions": [],
+  "resources": [
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2019-10-01",
+      "name": "networking",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "addressPrefixHub": {
+            "value": "[parameters('addressPrefixHub')]"
+          },
+          "addressPrefixSpoke": {
+            "value": "[parameters('addressPrefixSpoke')]"
+          },
+          "addressPrefixJumpboxSubnet": {
+            "value": "[parameters('addressJumpboxSubnet')]"
+          },
+          "addressPrefixSubnetAks": {
+            "value": "[parameters('addressPrefixSubnetAks')]"
+          },
+          "addressPrefixSubnetFw": {
+            "value": "[parameters('addressPrefixSubnetFw')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "parameters": {
+            "location": {
+              "type": "string"
+            },
+            "addressPrefixHub": {
+              "type": "string"
+            },
+            "addressPrefixSpoke": {
+              "type": "string"
+            },
+            "addressPrefixSubnetFw": {
+              "type": "string"
+            },
+            "addressPrefixJumpboxSubnet": {
+              "type": "string"
+            },
+            "addressPrefixSubnetAks": {
+              "type": "string"
+            }
+          },
+          "functions": [],
+          "resources": [
+            {
+              "type": "Microsoft.Network/virtualNetworks",
+              "apiVersion": "2020-06-01",
+              "name": "vnet-hub",
+              "location": "[parameters('location')]",
+              "properties": {
+                "addressSpace": {
+                  "addressPrefixes": [
+                    "[parameters('addressPrefixHub')]"
+                  ]
+                },
+                "subnets": [
+                  {
+                    "name": "AzureFirewallSubnet",
+                    "properties": {
+                      "addressPrefixes": [
+                        "[parameters('addressPrefixSubnetFw')]"
+                      ]
+                    }
+                  },
+                  {
+                    "name": "jumpboxSubnet",
+                    "properties": {
+                      "addressPrefixes": [
+                        "[parameters('addressPrefixJumpboxSubnet')]"
+                      ]
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "type": "Microsoft.Network/virtualNetworks",
+              "apiVersion": "2020-06-01",
+              "name": "spoke-hub",
+              "location": "[parameters('location')]",
+              "properties": {
+                "addressSpace": {
+                  "addressPrefixes": [
+                    "[parameters('addressPrefixSpoke')]"
+                  ]
+                },
+                "subnets": [
+                  {
+                    "name": "aksSubnet",
+                    "properties": {
+                      "addressPrefixes": [
+                        "[parameters('addressPrefixSubnetAks')]"
+                      ]
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
+              "apiVersion": "2020-06-01",
+              "name": "hubToSpoke",
+              "properties": {
+                "remoteAddressSpace": {
+                  "addressPrefixes": [
+                    "[parameters('addressPrefixSpoke')]"
+                  ]
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', 'vnet-hub')]",
+                "[resourceId('Microsoft.Network/virtualNetworks', 'spoke-hub')]"
+              ]
+            },
+            {
+              "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
+              "apiVersion": "2020-06-01",
+              "name": "spokeToHub",
+              "properties": {
+                "remoteAddressSpace": {
+                  "addressPrefixes": [
+                    "[parameters('addressPrefixHub')]"
+                  ]
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', 'vnet-hub')]",
+                "[resourceId('Microsoft.Network/virtualNetworks/virtualNetworkPeerings', split('hubToSpoke', '/')[0], split('hubToSpoke', '/')[1])]",
+                "[resourceId('Microsoft.Network/virtualNetworks', 'spoke-hub')]"
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
