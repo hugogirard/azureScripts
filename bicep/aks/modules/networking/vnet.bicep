@@ -77,3 +77,5 @@ resource peeringSpokeToHub 'Microsoft.Network/virtualNetworks/virtualNetworkPeer
     }
   }
 }
+
+output fwSubnetId string = hubvnet.properties.subnets[0].id

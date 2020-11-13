@@ -154,7 +154,13 @@
                 "[resourceId('Microsoft.Network/virtualNetworks', 'spoke-hub')]"
               ]
             }
-          ]
+          ],
+          "outputs": {
+            "fwSubnetId": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.Network/virtualNetworks', 'vnet-hub')).subnets[0].id]"
+            }
+          }
         }
       }
     }
