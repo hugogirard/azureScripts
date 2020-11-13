@@ -31,7 +31,7 @@ param strname string
 // }
 
 resource dns 'Microsoft.Network/privateDnsZones@2020-01-01' = {
-  name: 'aksDns'
+  name: 'hugirard.com'
   location: 'global'
   properties: {
     maxNumberOfRecordSets: 25000

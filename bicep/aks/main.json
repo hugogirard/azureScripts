@@ -397,7 +397,7 @@
             {
               "type": "Microsoft.Network/privateDnsZones",
               "apiVersion": "2020-01-01",
-              "name": "aksDns",
+              "name": "hugirard.com",
               "location": "global",
               "properties": {
                 "maxNumberOfRecordSets": 25000,
@@ -408,7 +408,7 @@
             {
               "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
               "apiVersion": "2020-01-01",
-              "name": "[concat('aksDns', '/link_to_', toLower(parameters('vnetName')))]",
+              "name": "[concat('hugirard.com', '/link_to_', toLower(parameters('vnetName')))]",
               "location": "global",
               "properties": {
                 "registrationEnabled": false,
@@ -417,7 +417,7 @@
                 }
               },
               "dependsOn": [
-                "[resourceId('Microsoft.Network/privateDnsZones', 'aksDns')]"
+                "[resourceId('Microsoft.Network/privateDnsZones', 'hugirard.com')]"
               ]
             }
           ]
