@@ -124,6 +124,35 @@
                   }
                 ]
               }
+            },
+            {
+              "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
+              "apiVersion": "2019-11-01",
+              "name": "[concat('vnet-hub', '/hubToSpoke')]",
+              "properties": {
+                "remoteVirtualNetwork": {
+                  "id": "[resourceId('Microsoft.Network/virtualNetworks', 'spoke-hub')]"
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', 'vnet-hub')]",
+                "[resourceId('Microsoft.Network/virtualNetworks', 'spoke-hub')]"
+              ]
+            },
+            {
+              "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
+              "apiVersion": "2020-06-01",
+              "name": "[concat('spoke-hub', '/spokeToHub')]",
+              "properties": {
+                "remoteVirtualNetwork": {
+                  "id": "[resourceId('Microsoft.Network/virtualNetworks', 'vnet-hub')]"
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', 'vnet-hub')]",
+                "[resourceId('Microsoft.Network/virtualNetworks/virtualNetworkPeerings', split(concat('vnet-hub', '/hubToSpoke'), '/')[0], split(concat('vnet-hub', '/hubToSpoke'), '/')[1])]",
+                "[resourceId('Microsoft.Network/virtualNetworks', 'spoke-hub')]"
+              ]
             }
           ]
         }
