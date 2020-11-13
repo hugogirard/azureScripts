@@ -20,7 +20,7 @@ jobs:
         curl -Lo bicep https://github.com/Azure/bicep/releases/latest/download/bicep-linux-x64
         chmod +x ./bicep
         sudo mv ./bicep /usr/local/bin/bicep
-        bicep build bicep/aks/main.bicep
+        /usr/local/bin/bicep/bicep build bicep/aks/main.bicep
         mkdir outputs
         mv bicep/aks/main.json outputs/main.json
         mv bicep/aks/parameters/main.parameters.json outputs/main.parameters.json
