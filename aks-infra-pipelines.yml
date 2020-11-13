@@ -31,6 +31,6 @@ steps:
       resourceGroupName: '$(resourceGroupName)'
       location: '$(location)'
       templateLocation: 'Linked artifact'
-      csmFile: '/bicep/aks/main.json'
-      csmParametersFile: '/bicep/aks/parameters/main.parameters.json'
+      csmFile: 'bicep/aks/main.json'
+      csmParametersFile: 'bicep/aks/parameters/main.parameters.json'
       deploymentMode: 'Incremental'
