@@ -1,7 +1,7 @@
-// param location string
-// param vnetName string
-// param vnetId string
-// param strname string
+param location string
+param vnetName string
+param vnetId string
+param strname string
 
 // resource str 'Microsoft.Storage/storageAccounts@2019-06-01' = {
 //   name: strname
@@ -30,29 +30,29 @@
 //   }
 // }
 
-// resource dns 'Microsoft.Network/privateDnsZones@2020-01-01' = {
-//   name: 'aksDns'
-//   location: 'global'
-//   properties: {
-//     maxNumberOfRecordSets: 25000
-//     maxNumberOfVirtualNetworkLinks: 1000
-//     maxNumberOfVirtualNetworkLinksWithRegistration: 100
-//   }
-// }
+resource dns 'Microsoft.Network/privateDnsZones@2020-01-01' = {
+  name: 'aksDns'
+  location: 'global'
+  properties: {
+    maxNumberOfRecordSets: 25000
+    maxNumberOfVirtualNetworkLinks: 1000
+    maxNumberOfVirtualNetworkLinksWithRegistration: 100
+  }
+}
 
-// resource vnetLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-01-01' = {
-//   name: concat(dns.name,'/link_to_',toLower(vnetName))
-//   location: 'global'
-//   dependsOn: [
-//     dns
-//   ]
-//   properties: {
-//     registrationEnabled: false
-//     virtualNetwork: {
-//       id: vnetId
-//     }
-//   }
-// }
+resource vnetLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-01-01' = {
+  name: concat(dns.name,'/link_to_',toLower(vnetName))
+  location: 'global'
+  dependsOn: [
+    dns
+  ]
+  properties: {
+    registrationEnabled: false
+    virtualNetwork: {
+      id: vnetId
+    }
+  }
+}
 
 // // resource dnsZoneGroups 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2020-03-01' = {
 // //   name: concat()

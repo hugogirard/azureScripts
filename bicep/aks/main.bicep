@@ -24,3 +24,13 @@ module firewall './modules/firewall/firewall.bicep' = {
     fwSubnetId: networking.outputs.fwSubnetId
   }
 }
+
+module aks './modules/aks/aks.bicep' = {
+  name: 'aks'
+  params: {
+    location: location
+    strname: 'teststr'
+    vnetId: networking.outputs.aksSubnetId
+    vnetName: networking.outputs.vnetName
+  }
+}
