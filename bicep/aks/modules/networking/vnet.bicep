@@ -18,17 +18,13 @@ resource hubvnet 'Microsoft.Network/virtualNetworks@2020-06-01' = {
       {
         name: 'AzureFirewallSubnet'
         properties: {
-          addressPrefixes: [
-            addressPrefixSubnetFw
-          ]
+          addressPrefix: addressPrefixSubnetAks
         }
       }
       {
         name: 'jumpboxSubnet'
         properties: {
-          addressPrefixes: [
-            addressPrefixJumpboxSubnet
-          ]
+          addressPrefix: addressPrefixJumpboxSubnet
         }
       }
     ]
@@ -48,9 +44,7 @@ resource spokeVnet 'Microsoft.Network/virtualNetworks@2020-06-01' = {
       {
         name: 'aksSubnet'
         properties: {
-          addressPrefixes: [
-            addressPrefixSubnetAks
-          ]
+          addressPrefix: addressPrefixSubnetAks
         }
       }
     ]
