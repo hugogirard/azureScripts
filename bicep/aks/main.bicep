@@ -16,3 +16,11 @@ module networking './modules/networking/vnet.bicep' = {
     addressPrefixSubnetFw: addressPrefixSubnetFw
   }
 }
+
+module firewall './modules/firewall/firewall.bicep' = {
+  name: 'firewall'
+  params: {
+    location: location
+    fwSubnetId: networking.outputs.fwSubnetId
+  }
+}
