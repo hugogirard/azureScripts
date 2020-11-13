@@ -57,29 +57,29 @@ resource spokeVnet 'Microsoft.Network/virtualNetworks@2020-06-01' = {
   }
 }
 
-resource peeringHubToSpoke 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2019-11-01' = {
-  name: concat(hubvnet.name,'/hubToSpoke')
-  dependsOn: [
-    hubvnet
-    spokeVnet
-  ]
-  properties: {
-    remoteVirtualNetwork: {
-      id: spokeVnet.id
-    }
-  }
-}
+// resource peeringHubToSpoke 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2019-11-01' = {
+//   name: concat(hubvnet.name,'/hubToSpoke')
+//   dependsOn: [
+//     hubvnet
+//     spokeVnet
+//   ]
+//   properties: {
+//     remoteVirtualNetwork: {
+//       id: spokeVnet.id
+//     }
+//   }
+// }
 
-resource peeringSpokeToHub 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2020-06-01' = {
-  name: concat(spokeVnet.name,'/spokeToHub')
-  dependsOn: [
-    hubvnet
-    spokeVnet
-    peeringHubToSpoke
-  ]
-  properties: {
-    remoteVirtualNetwork: {
-      id: hubvnet.id
-    }
-  }
-}
+// resource peeringSpokeToHub 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2020-06-01' = {
+//   name: concat(spokeVnet.name,'/spokeToHub')
+//   dependsOn: [
+//     hubvnet
+//     spokeVnet
+//     peeringHubToSpoke
+//   ]
+//   properties: {
+//     remoteVirtualNetwork: {
+//       id: hubvnet.id
+//     }
+//   }
+// }
