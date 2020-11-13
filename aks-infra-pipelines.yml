@@ -12,7 +12,16 @@ variables:
   sp: 'SpDevOps'
   
 steps:
+  - task: AzureCLI@2
+    displayName: Create Resource Group
+    inputs:
+      azureSubscription: 'SpDevOps'
+      scriptType: 'batch'
+      scriptLocation: 'inlineScript'
+      inlineScript: 'az group create -m $(resourceGroupName) -l $(location)'
+
   - task: AzureResourceManagerTemplateDeployment@3
+    displayName: Deploy AKS    
     inputs:
       deploymentScope: 'Resource Group'
       azureResourceManagerConnection: $(sp)
