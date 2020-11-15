@@ -80,7 +80,7 @@ resource aks 'Microsoft.ContainerService/managedClusters@2020-07-01' = {
     }            
     agentPoolProfiles: [
       {
-        name: 'systemPool'
+        name: 'systempool'
         count: 2
         vmSize: 'Standard_DS3_v2'
         osDiskSizeGB: 100

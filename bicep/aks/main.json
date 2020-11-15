@@ -435,7 +435,7 @@
                 },
                 "agentPoolProfiles": [
                   {
-                    "name": "systemPool",
+                    "name": "systempool",
                     "count": 2,
                     "vmSize": "Standard_DS3_v2",
                     "osDiskSizeGB": 100,
