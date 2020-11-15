@@ -421,7 +421,7 @@
                 "type": "SystemAssigned"
               },
               "properties": {
-                "kubernetesVersion": "1.17.9",
+                "kubernetesVersion": "1.17.13",
                 "dnsPrefix": "aks-egress",
                 "enableRBAC": true,
                 "networkProfile": {
