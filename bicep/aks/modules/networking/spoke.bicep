@@ -84,3 +84,4 @@ resource peeringSpokeToHub 'Microsoft.Network/virtualNetworks/virtualNetworkPeer
 
 output aksSubnetId string = spokeVnet.properties.subnets[0].id
 output aksSubnetName string = spokeVnet.properties.subnets[0].name
+output vnetId string = spokeVnet.id

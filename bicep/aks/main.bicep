@@ -56,5 +56,6 @@ module aks './modules/aks/aks.bicep' = {
     fwPublicIp: firewall.outputs.fwIp
     adminUsername: adminUsername
     sshKey: sshKey
+    vnetId: spokevnet.outputs.vnetId
   }
 }

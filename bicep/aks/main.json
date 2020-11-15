@@ -454,6 +454,10 @@
             "aksSubnetName": {
               "type": "string",
               "value": "[reference(resourceId('Microsoft.Network/virtualNetworks', 'spoke-hub')).subnets[0].name]"
+            },
+            "vnetId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.Network/virtualNetworks', 'spoke-hub')]"
             }
           }
         }
@@ -487,6 +491,9 @@
           },
           "sshKey": {
             "value": "[parameters('sshKey')]"
+          },
+          "vnetId": {
+            "value": "[reference(extensionResourceId(resourceGroup().id, 'Microsoft.Resources/deployments', 'spokevnet'), '2019-10-01').outputs.vnetId.value]"
           }
         },
         "template": {
@@ -507,31 +514,74 @@
             },
             "fwPublicIp": {
               "type": "string"
+            },
+            "vnetId": {
+              "type": "string"
             }
           },
           "functions": [],
           "variables": {
-            "networkContributorId": "4d97b98b-1d4f-4787-a291-c67834d212e7"
+            "networkContributorId": "[concat(subscription().id, '/providers/Microsoft.Authorization/roleDefinitions/4d97b98b-1d4f-4787-a291-c67834d212e7')]"
           },
           "resources": [
             {
-              "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
-              "apiVersion": "2018-11-30",
-              "name": "aksIdentity",
-              "location": "[parameters('location')]"
-            },
-            {
-              "type": "Microsoft.Authorization/roleAssignments",
-              "apiVersion": "2020-04-01-preview",
-              "name": "[guid(resourceGroup().id)]",
-              "properties": {
-                "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', variables('networkContributorId'))]",
-                "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', 'aksIdentity')).principalId]",
-                "principalType": "ServicePrincipal"
+              "type": "Microsoft.ContainerService/managedClusters",
+              "apiVersion": "2020-07-01",
+              "name": "aks-egress",
+              "location": "[parameters('location')]",
+              "identity": {
+                "type": "SystemAssigned"
               },
-              "dependsOn": [
-                "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', 'aksIdentity')]"
-              ]
+              "properties": {
+                "kubernetesVersion": "1.17.13",
+                "dnsPrefix": "aks-egress",
+                "enableRBAC": true,
+                "servicePrincipalProfile": {
+                  "clientId": "msi",
+                  "secret": null
+                },
+                "networkProfile": {
+                  "networkPlugin": "azure",
+                  "networkPolicy": "azure",
+                  "serviceCidr": "10.41.0.0/16",
+                  "dnsServiceIP": "10.41.0.10",
+                  "dockerBridgeCidr": "172.17.0.1/16",
+                  "loadBalancerSku": "standard",
+                  "outboundType": "userDefinedRouting"
+                },
+                "agentPoolProfiles": [
+                  {
+                    "name": "systempool",
+                    "count": 2,
+                    "vmSize": "Standard_DS3_v2",
+                    "osDiskSizeGB": 100,
+                    "vnetSubnetID": "[parameters('aksSubnetId')]",
+                    "osType": "Linux",
+                    "maxCount": 5,
+                    "minCount": 2,
+                    "scaleSetPriority": "Regular",
+                    "enableAutoScaling": true,
+                    "mode": "System",
+                    "type": "VirtualMachineScaleSets"
+                  }
+                ],
+                "linuxProfile": {
+                  "adminUsername": "[parameters('adminUsername')]",
+                  "ssh": {
+                    "publicKeys": [
+                      {
+                        "keyData": "[parameters('sshKey')]"
+                      }
+                    ]
+                  }
+                },
+                "apiServerAccessProfile": {
+                  "enablePrivateCluster": false,
+                  "authorizedIPRanges": [
+                    "[parameters('fwPublicIp')]"
+                  ]
+                }
+              }
             }
           ]
         }
