@@ -19,6 +19,12 @@
         },
         "addressPrefixSubnetAks": {
             "value": "11.0.0.0/16"
+        },
+        "adminUsername": {
+            "value": "__username__"
+        },
+        "sshKey": {
+            "value": "_sshkey__"
         }
     }
 }
