@@ -19,6 +19,12 @@
     },
     "addressPrefixSubnetAks": {
       "type": "string"
+    },
+    "adminUsername": {
+      "type": "string"
+    },
+    "sshKey": {
+      "type": "string"
     }
   },
   "functions": [],
@@ -345,7 +351,13 @@
                 "[resourceId('Microsoft.Network/publicIPAddresses', 'pipfw')]"
               ]
             }
-          ]
+          ],
+          "outputs": {
+            "fwIp": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.Network/publicIPAddresses', 'pipfw')).ipAddress]"
+            }
+          }
         }
       },
       "dependsOn": [
@@ -365,14 +377,17 @@
           "location": {
             "value": "[parameters('location')]"
           },
-          "strname": {
-            "value": "teststr"
-          },
-          "vnetId": {
+          "aksSubnetId": {
             "value": "[reference(extensionResourceId(resourceGroup().id, 'Microsoft.Resources/deployments', 'networking'), '2019-10-01').outputs.aksSubnetId.value]"
           },
-          "vnetName": {
-            "value": "[reference(extensionResourceId(resourceGroup().id, 'Microsoft.Resources/deployments', 'networking'), '2019-10-01').outputs.vnetName.value]"
+          "fwPublicIp": {
+            "value": "[reference(extensionResourceId(resourceGroup().id, 'Microsoft.Resources/deployments', 'firewall'), '2019-10-01').outputs.fwIp.value]"
+          },
+          "adminUsername": {
+            "value": "[parameters('adminUsername')]"
+          },
+          "sshKey": {
+            "value": "[parameters('sshKey')]"
           }
         },
         "template": {
@@ -382,48 +397,81 @@
             "location": {
               "type": "string"
             },
-            "vnetName": {
+            "aksSubnetId": {
               "type": "string"
             },
-            "vnetId": {
+            "adminUsername": {
               "type": "string"
             },
-            "strname": {
+            "sshKey": {
+              "type": "string"
+            },
+            "fwPublicIp": {
               "type": "string"
             }
           },
           "functions": [],
           "resources": [
             {
-              "type": "Microsoft.Network/privateDnsZones",
-              "apiVersion": "2020-01-01",
-              "name": "hugirard.com",
-              "location": "global",
-              "properties": {
-                "maxNumberOfRecordSets": 25000,
-                "maxNumberOfVirtualNetworkLinks": 1000,
-                "maxNumberOfVirtualNetworkLinksWithRegistration": 100
-              }
-            },
-            {
-              "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
-              "apiVersion": "2020-01-01",
-              "name": "[concat('hugirard.com', '/link_to_', toLower(parameters('vnetName')))]",
-              "location": "global",
-              "properties": {
-                "registrationEnabled": false,
-                "virtualNetwork": {
-                  "id": "[parameters('vnetId')]"
-                }
+              "type": "Microsoft.ContainerService/managedClusters",
+              "apiVersion": "2020-07-01",
+              "name": "aks-egress",
+              "location": "[parameters('location')]",
+              "identity": {
+                "type": "SystemAssigned"
               },
-              "dependsOn": [
-                "[resourceId('Microsoft.Network/privateDnsZones', 'hugirard.com')]"
-              ]
+              "properties": {
+                "kubernetesVersion": "1.17.9",
+                "dnsPrefix": "aks-egress",
+                "enableRBAC": true,
+                "networkProfile": {
+                  "networkPlugin": "azure",
+                  "networkPolicy": "azure",
+                  "podCidr": "11.41.0.0/16",
+                  "dnsServiceIP": "11.41.0.10",
+                  "dockerBridgeCidr": "172.17.0.1/16",
+                  "loadBalancerSku": "standard",
+                  "outboundType": "userDefinedRouting"
+                },
+                "agentPoolProfiles": [
+                  {
+                    "name": "systemPool",
+                    "count": 2,
+                    "vmSize": "Standard_DS3_v2",
+                    "osDiskSizeGB": 100,
+                    "vnetSubnetID": "[parameters('aksSubnetId')]",
+                    "osType": "Linux",
+                    "maxCount": 5,
+                    "minCount": 2,
+                    "scaleSetPriority": "Regular",
+                    "enableAutoScaling": true,
+                    "mode": "System",
+                    "type": "VirtualMachineScaleSets"
+                  }
+                ],
+                "linuxProfile": {
+                  "adminUsername": "[parameters('adminUsername')]",
+                  "ssh": {
+                    "publicKeys": [
+                      {
+                        "keyData": "[parameters('sshKey')]"
+                      }
+                    ]
+                  }
+                },
+                "apiServerAccessProfile": {
+                  "enablePrivateCluster": true,
+                  "authorizedIPRanges": [
+                    "[parameters('fwPublicIp')]"
+                  ]
+                }
+              }
             }
           ]
         }
       },
       "dependsOn": [
+        "[extensionResourceId(resourceGroup().id, 'Microsoft.Resources/deployments', 'firewall')]",
         "[extensionResourceId(resourceGroup().id, 'Microsoft.Resources/deployments', 'networking')]"
       ]
     }

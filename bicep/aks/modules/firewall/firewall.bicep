@@ -141,3 +141,5 @@ resource fw 'Microsoft.Network/azureFirewalls@2020-06-01' = {
     natRuleCollections: []
   }
 }
+
+output fwIp string = pip.properties.ipAddress

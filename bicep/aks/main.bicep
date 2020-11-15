@@ -4,6 +4,8 @@ param addressPrefixSpoke string
 param addressPrefixSubnetFw string
 param addressJumpboxSubnet string
 param addressPrefixSubnetAks string
+param adminUsername string
+param sshKey string
 
 module networking './modules/networking/vnet.bicep' = {
   name: 'networking'
@@ -29,8 +31,9 @@ module aks './modules/aks/aks.bicep' = {
   name: 'aks'
   params: {
     location: location
-    strname: 'teststr'
-    vnetId: networking.outputs.aksSubnetId
-    vnetName: networking.outputs.vnetName
+    aksSubnetId: networking.outputs.aksSubnetId
+    fwPublicIp: firewall.outputs.fwIp
+    adminUsername: adminUsername
+    sshKey: sshKey
   }
 }
