@@ -157,7 +157,7 @@ resource routeTable 'Microsoft.Network/routeTables@2020-06-01' = {
         properties: {
           addressPrefix: '0.0.0.0/0'
           nextHopType: 'VirtualAppliance'
-          nextHopIpAddress: fw.properties.ipConfigurations[0].privateIPAddress
+          nextHopIpAddress: fw.properties.hubIPAddresses.privateIPAddress
         }
       }
       {

@@ -379,7 +379,7 @@
                     "properties": {
                       "addressPrefix": "0.0.0.0/0",
                       "nextHopType": "VirtualAppliance",
-                      "nextHopIpAddress": "[reference(resourceId('Microsoft.Network/azureFirewalls', 'azureFw')).ipConfigurations[0].privateIPAddress]"
+                      "nextHopIpAddress": "[reference(resourceId('Microsoft.Network/azureFirewalls', 'azureFw')).hubIPAddresses.privateIPAddress]"
                     }
                   },
                   {
