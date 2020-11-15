@@ -18,7 +18,7 @@ resource aks 'Microsoft.ContainerService/managedClusters@2020-07-01' = {
     dnsPrefix: 'aks-egress'
     enableRBAC: true
     servicePrincipalProfile: {
-      clientId: 'msi'
+      clientId: 'msi'      
       secret: null
     }
     networkProfile: {
