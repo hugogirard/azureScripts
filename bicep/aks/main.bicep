@@ -45,13 +45,16 @@ module spokevnet './modules/networking/spoke.bicep' = {
   }
 }
 
-// module aks './modules/aks/aks.bicep' = {
-//   name: 'aks'
-//   params: {
-//     location: location
-//     aksSubnetId: networking.outputs.aksSubnetId
-//     fwPublicIp: firewall.outputs.fwIp
-//     adminUsername: adminUsername
-//     sshKey: sshKey
-//   }
-// }
+module aks './modules/aks/aks.bicep' = {
+  name: 'aks'
+  dependsOn: [
+    spokevnet
+  ]
+  params: {
+    location: location
+    aksSubnetId: spokevnet.outputs.aksSubnetId
+    fwPublicIp: firewall.outputs.fwIp
+    adminUsername: adminUsername
+    sshKey: sshKey
+  }
+}
