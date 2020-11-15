@@ -61,70 +61,57 @@ var networkContributorId = '4d97b98b-1d4f-4787-a291-c67834d212e7'
 //   name: concat()
 // }
 
-resource identity 'Microsoft.ManagedIdentity/userAssignedIdentities@2018-11-30' = {
-  name: 'aksIdentity'
-  location: location  
-}
-
-resource role 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
-  name: guid(resourceGroup().id)
+resource aks 'Microsoft.ContainerService/managedClusters@2020-07-01' = {
+  name: 'aks-egress'
+  location: location
+  identity: {
+    type: 'SystemAssigned'
+  }  
   properties: {
-    roleDefinitionId: concat('/subscriptions/',subscription().subscriptionId,'/providers/Microsoft.Authorization/roleDefinitions/',networkContributorId)
-    principalId: identity.id
+    kubernetesVersion: '1.17.13'
+    dnsPrefix: 'aks-egress'
+    enableRBAC: true
+    networkProfile: {
+      networkPlugin: 'azure'
+      networkPolicy: 'azure'
+      serviceCidr: '10.41.0.0/16'
+      dnsServiceIP: '10.41.0.10'
+      dockerBridgeCidr: '172.17.0.1/16'
+      loadBalancerSku: 'standard'
+      outboundType: 'userDefinedRouting'    
+    }            
+    agentPoolProfiles: [
+      {
+        name: 'systempool'
+        count: 2
+        vmSize: 'Standard_DS3_v2'
+        osDiskSizeGB: 100
+        vnetSubnetID: aksSubnetId        
+        osType: 'Linux'
+        maxCount: 5
+        minCount: 2
+        scaleSetPriority: 'Regular'
+        enableAutoScaling: true
+        mode: 'System'
+        type: 'VirtualMachineScaleSets'
+      }
+    ]
+    linuxProfile: {
+      adminUsername: adminUsername      
+      ssh: {
+        publicKeys: [
+          {
+            keyData: sshKey
+          }
+        ]
+      }
+    }
+    apiServerAccessProfile: {
+      enablePrivateCluster: false     
+      authorizedIPRanges: [
+        fwPublicIp
+      ] 
+    }    
   }
 }
-
-// resource aks 'Microsoft.ContainerService/managedClusters@2020-07-01' = {
-//   name: 'aks-egress'
-//   location: location
-//   identity: {
-//     type: 'SystemAssigned'
-//   }  
-//   properties: {
-//     kubernetesVersion: '1.17.13'
-//     dnsPrefix: 'aks-egress'
-//     enableRBAC: true
-//     networkProfile: {
-//       networkPlugin: 'azure'
-//       networkPolicy: 'azure'
-//       serviceCidr: '10.41.0.0/16'
-//       dnsServiceIP: '10.41.0.10'
-//       dockerBridgeCidr: '172.17.0.1/16'
-//       loadBalancerSku: 'standard'
-//       outboundType: 'userDefinedRouting'    
-//     }            
-//     agentPoolProfiles: [
-//       {
-//         name: 'systempool'
-//         count: 2
-//         vmSize: 'Standard_DS3_v2'
-//         osDiskSizeGB: 100
-//         vnetSubnetID: aksSubnetId        
-//         osType: 'Linux'
-//         maxCount: 5
-//         minCount: 2
-//         scaleSetPriority: 'Regular'
-//         enableAutoScaling: true
-//         mode: 'System'
-//         type: 'VirtualMachineScaleSets'
-//       }
-//     ]
-//     linuxProfile: {
-//       adminUsername: adminUsername      
-//       ssh: {
-//         publicKeys: [
-//           {
-//             keyData: sshKey
-//           }
-//         ]
-//       }
-//     }
-//     apiServerAccessProfile: {
-//       enablePrivateCluster: false     
-//       authorizedIPRanges: [
-//         fwPublicIp
-//       ] 
-//     }    
-//   }
-// }
 
