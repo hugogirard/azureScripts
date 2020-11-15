@@ -1,7 +1,5 @@
 param location string
 param fwSubnetId string
-param vnetName string
-param aksSubnetName string
 
 resource pip 'Microsoft.Network/publicIPAddresses@2020-06-01' = {
   name: 'pipfw'
@@ -144,44 +142,6 @@ resource fw 'Microsoft.Network/azureFirewalls@2020-06-01' = {
   }
 }
 
-resource routeTable 'Microsoft.Network/routeTables@2020-06-01' = {
-  name: 'fwRoute'
-  location: location
-  dependsOn: [
-    fw
-  ]
-  properties: {
-    routes: [
-      {
-        name: 'aksToFw'
-        properties: {
-          addressPrefix: '0.0.0.0/0'
-          nextHopType: 'VirtualAppliance'
-          nextHopIpAddress: fw.properties.hubIPAddresses.privateIPAddress
-        }
-      }
-      {
-        name: 'fwToInternet'
-        properties: {
-          addressPrefix: '${pip.properties.ipAddress}/32'
-          nextHopType: 'Internet'
-        }
-      }
-    ]
-  }
-}
-
-// Update the subnet with route table
-resource aksSubnet 'Microsoft.Network/virtualNetworks/subnets@2020-06-01' = {
-  name: concat(vnetName,'/',aksSubnetName)
-  dependsOn: [
-    routeTable
-  ]
-  properties: {
-    routeTable: {
-      id: routeTable.id
-    }
-  }
-}
 
 output fwIp string = pip.properties.ipAddress
+output fwPrivateIp string = fw.properties.ipConfigurations[0].properties.privateIPAddress

@@ -7,25 +7,41 @@ param addressPrefixSubnetAks string
 param adminUsername string
 param sshKey string
 
-module networking './modules/networking/vnet.bicep' = {
-  name: 'networking'
+module hubvnet './modules/networking/hub.bicep' = {
+  name: 'hubvnet'
   params: {
     location: location
     addressPrefixHub: addressPrefixHub
-    addressPrefixSpoke: addressPrefixSpoke
     addressPrefixJumpboxSubnet: addressJumpboxSubnet
-    addressPrefixSubnetAks: addressPrefixSubnetAks
     addressPrefixSubnetFw: addressPrefixSubnetFw
   }
 }
 
 module firewall './modules/firewall/firewall.bicep' = {
   name: 'firewall'
+  dependsOn: [
+    hubvnet
+  ]
   params: {
     location: location
-    fwSubnetId: networking.outputs.fwSubnetId
-    vnetName: networking.outputs.vnetName
-    aksSubnetName: networking.outputs.aksSubnetName
+    fwSubnetId: hubvnet.outputs.fwSubnetId
+  }
+}
+
+module spokevnet './modules/networking/spoke.bicep' = {
+  name: 'spokevnet'
+  dependsOn: [
+    hubvnet
+    firewall
+  ]
+  params: {
+    addressPrefixSpoke: addressPrefixSpoke
+    addressPrefixSubnetAks: addressPrefixSubnetAks
+    location: location
+    firewallPrivateIp: firewall.outputs.fwPrivateIp
+    firewallPublicIp: firewall.outputs.fwIp
+    hubVnetName: hubvnet.outputs.vnetName
+    hubVnetId: hubvnet.outputs.hubVnetId
   }
 }
 

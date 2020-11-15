@@ -1,39 +1,42 @@
-param location string
-param addressPrefixHub string
 param addressPrefixSpoke string
-param addressPrefixSubnetFw string
-param addressPrefixJumpboxSubnet string
 param addressPrefixSubnetAks string
+param location string 
+param firewallPrivateIp string
+param firewallPublicIp string
+param hubVnetName string
+param hubVnetId string
 
-resource hubvnet 'Microsoft.Network/virtualNetworks@2020-06-01' = {
-  name: 'vnet-hub'
+resource routeTable 'Microsoft.Network/routeTables@2020-06-01' = {
+  name: 'fwRoute'
   location: location
   properties: {
-    addressSpace: {
-      addressPrefixes: [
-        addressPrefixHub
-      ]
-    }
-    subnets: [
+    routes: [
       {
-        name: 'AzureFirewallSubnet'
+        name: 'aksToFw'
         properties: {
-          addressPrefix: addressPrefixSubnetFw
+          addressPrefix: '0.0.0.0/0'
+          nextHopType: 'VirtualAppliance'
+          nextHopIpAddress: firewallPrivateIp
         }
       }
       {
-        name: 'jumpboxSubnet'
+        name: 'fwToInternet'
         properties: {
-          addressPrefix: addressPrefixJumpboxSubnet
+          addressPrefix: '${firewallPublicIp}/32'
+          nextHopType: 'Internet'
         }
       }
     ]
   }
 }
 
+
 resource spokeVnet 'Microsoft.Network/virtualNetworks@2020-06-01' = {
   name: 'spoke-hub'
   location: location
+  dependsOn: [
+    routeTable
+  ]
   properties: {
     addressSpace: {
       addressPrefixes: [
@@ -45,16 +48,18 @@ resource spokeVnet 'Microsoft.Network/virtualNetworks@2020-06-01' = {
         name: 'aksSubnet'
         properties: {
           addressPrefix: addressPrefixSubnetAks
-        }
+          routeTable: {
+            id: routeTable.id
+          }
+        }      
       }
     ]
   }
 }
 
 resource peeringHubToSpoke 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2019-11-01' = {
-  name: concat(hubvnet.name,'/hubToSpoke')
-  dependsOn: [
-    hubvnet
+  name: concat(hubVnetName,'/hubToSpoke')
+  dependsOn: [    
     spokeVnet
   ]
   properties: {
@@ -66,19 +71,16 @@ resource peeringHubToSpoke 'Microsoft.Network/virtualNetworks/virtualNetworkPeer
 
 resource peeringSpokeToHub 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2020-06-01' = {
   name: concat(spokeVnet.name,'/spokeToHub')
-  dependsOn: [
-    hubvnet
+  dependsOn: [    
     spokeVnet
     peeringHubToSpoke
   ]
   properties: {
     remoteVirtualNetwork: {
-      id: hubvnet.id
+      id: hubVnetId
     }
   }
 }
 
-output fwSubnetId string = hubvnet.properties.subnets[0].id
 output aksSubnetId string = spokeVnet.properties.subnets[0].id
 output aksSubnetName string = spokeVnet.properties.subnets[0].name
-output vnetName string = 'spoke-hub'
