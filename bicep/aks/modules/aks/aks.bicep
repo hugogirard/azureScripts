@@ -105,7 +105,7 @@ resource aks 'Microsoft.ContainerService/managedClusters@2020-07-01' = {
       }
     }
     apiServerAccessProfile: {
-      enablePrivateCluster: true     
+      enablePrivateCluster: false     
       authorizedIPRanges: [
         fwPublicIp
       ] 

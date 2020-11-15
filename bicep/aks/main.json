@@ -460,7 +460,7 @@
                   }
                 },
                 "apiServerAccessProfile": {
-                  "enablePrivateCluster": true,
+                  "enablePrivateCluster": false,
                   "authorizedIPRanges": [
                     "[parameters('fwPublicIp')]"
                   ]
