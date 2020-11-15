@@ -24,7 +24,7 @@
             "value": "__username__"
         },
         "sshKey": {
-            "value": "_sshkey__"
+            "value": "__sshkey__"
         }
     }
 }
