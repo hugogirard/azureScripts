@@ -72,7 +72,7 @@ resource aks 'Microsoft.ContainerService/managedClusters@2020-07-01' = {
     networkProfile: {
       networkPlugin: 'azure'
       networkPolicy: 'azure'
-      podCidr: '10.41.0.0/16'
+      serviceCidr: '10.41.0.0/16'
       dnsServiceIP: '10.41.0.10'
       dockerBridgeCidr: '172.17.0.1/16'
       loadBalancerSku: 'standard'
