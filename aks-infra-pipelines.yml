@@ -20,7 +20,18 @@ steps:
   #     scriptType: 'batch'
   #     scriptLocation: 'inlineScript'
   #     inlineScript: 'az group create -m $(resourceGroupName) -l $(location)'
-
+  - task: replacetokens@3
+    displayName: Replace Variables
+    inputs:
+      targetFiles: 'bicep/aks/parameters/main.parameters.json'
+      encoding: 'auto'
+      writeBOM: true
+      actionOnMissing: 'warn'
+      keepToken: false
+      tokenPrefix: '__'
+      tokenSuffix: '__'
+      useLegacyPattern: false
+      enableTelemetry: true
   - task: AzureResourceManagerTemplateDeployment@3
     displayName: Deploy AKS    
     inputs:
