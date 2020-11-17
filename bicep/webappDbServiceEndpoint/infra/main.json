@@ -34,7 +34,8 @@
           "functions": [],
           "variables": {
             "suffix": "[uniqueString(resourceGroup().id)]",
-            "appPlanName": "[format('applan={0}', variables('suffix'))]"
+            "appPlanName": "[format('applan-{0}', variables('suffix'))]",
+            "websiteName": "[format('websitedemo-{0}', variables('suffix'))]"
           },
           "resources": [
             {

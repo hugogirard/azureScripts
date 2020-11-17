@@ -1,5 +1,5 @@
 param location string
-param vnetResourceId string
+//param vnetResourceId string
 
 var suffix = uniqueString(resourceGroup().id)
 var appPlanName = 'applan-${suffix}'
