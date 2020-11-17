@@ -1,0 +1,39 @@
+# Deploy private cluster using ARM template
+
+trigger:
+- master
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  location: eastus
+  resourceGroupName: 'appsrv-demo-rg'
+  sp: 'SpDevOps'
+  
+steps:
+  - task: replacetokens@3
+    displayName: Replace Variables
+    inputs:
+      targetFiles: webappDbServiceEndpoint/infra/main.parameters.json'
+      encoding: 'auto'
+      writeBOM: true
+      actionOnMissing: 'warn'
+      keepToken: false
+      tokenPrefix: '__'
+      tokenSuffix: '__'
+      useLegacyPattern: false
+      enableTelemetry: true
+  - task: AzureResourceManagerTemplateDeployment@3
+    displayName: Deploy AKS    
+    inputs:
+      deploymentScope: 'Resource Group'
+      azureResourceManagerConnection: $(sp)
+      subscriptionId: $(subscriptionId)
+      action: 'Create Or Update Resource Group'
+      resourceGroupName: '$(resourceGroupName)'
+      location: '$(location)'
+      templateLocation: 'Linked artifact'
+      csmFile: 'webappDbServiceEndpoint/infra/main.json'
+      csmParametersFile: 'webappDbServiceEndpoint/infra/main.parameters.json'
+      deploymentMode: 'Incremental'
