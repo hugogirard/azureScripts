@@ -1,5 +1,3 @@
-# Deploy private cluster using ARM template
-
 trigger:
 - master
 
