@@ -3,13 +3,14 @@ param location string
 var suffix = uniqueString(resourceGroup().id)
 var appPlanName = 'applan=${suffix}'
 
-resource appplan 'Microsoft.Web/serverfarms@2018-02-01' = {
+resource appplan 'Microsoft.Web/serverfarms@2019-08-01' = {
   name: appPlanName
   location: location
   properties: {
+    name: appPlanName
   }
   sku: {
-    name: 'Standard'
-    tier: 'S1'
+    name: 'S1'
+    capacity: 1
   }
 }
