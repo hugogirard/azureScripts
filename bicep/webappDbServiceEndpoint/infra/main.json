@@ -49,7 +49,7 @@
               },
               "sku": {
                 "name": "Standard",
-                "skuCode": "S1"
+                "tier": "S1"
               }
             }
           ]

@@ -14,6 +14,6 @@ resource appplan 'Microsoft.Web/serverfarms@2018-11-01' = {
   }
   sku: {
     name: 'Standard'
-    skuCode: 'S1'
+    tier: 'S1'
   }
 }
