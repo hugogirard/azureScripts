@@ -10,18 +10,6 @@ variables:
   sp: 'SpDevOps'
   
 steps:
-  - task: replacetokens@3
-    displayName: Replace Variables
-    inputs:
-      targetFiles: bicep/webappDbServiceEndpoint/infra/main.parameters.json'
-      encoding: 'auto'
-      writeBOM: true
-      actionOnMissing: 'warn'
-      keepToken: false
-      tokenPrefix: '__'
-      tokenSuffix: '__'
-      useLegacyPattern: false
-      enableTelemetry: true
   - task: AzureResourceManagerTemplateDeployment@3
     displayName: Deploy WebApp    
     inputs:
