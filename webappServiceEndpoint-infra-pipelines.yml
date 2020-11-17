@@ -13,7 +13,7 @@ steps:
   - task: replacetokens@3
     displayName: Replace Variables
     inputs:
-      targetFiles: webappDbServiceEndpoint/infra/main.parameters.json'
+      targetFiles: bicep/webappDbServiceEndpoint/infra/main.parameters.json'
       encoding: 'auto'
       writeBOM: true
       actionOnMissing: 'warn'
@@ -32,6 +32,6 @@ steps:
       resourceGroupName: '$(resourceGroupName)'
       location: '$(location)'
       templateLocation: 'Linked artifact'
-      csmFile: 'webappDbServiceEndpoint/infra/main.json'
-      csmParametersFile: 'webappDbServiceEndpoint/infra/main.parameters.json'
+      csmFile: 'bicep/webappDbServiceEndpoint/infra/main.json'
+      csmParametersFile: 'bicep/webappDbServiceEndpoint/infra/main.parameters.json'
       deploymentMode: 'Incremental'
