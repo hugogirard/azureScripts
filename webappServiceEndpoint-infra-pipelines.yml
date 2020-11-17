@@ -21,5 +21,4 @@ steps:
       location: '$(location)'
       templateLocation: 'Linked artifact'
       csmFile: 'bicep/webappDbServiceEndpoint/infra/main.json'
-      csmParametersFile: 'bicep/webappDbServiceEndpoint/infra/main.parameters.json'
       deploymentMode: 'Incremental'
