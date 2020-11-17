@@ -39,15 +39,10 @@
           "resources": [
             {
               "type": "Microsoft.Web/serverfarms",
-              "apiVersion": "2018-11-01",
+              "apiVersion": "2018-02-01",
               "name": "[variables('appPlanName')]",
               "location": "[parameters('location')]",
-              "properties": {
-                "name": "[variables('appPlanName')]",
-                "workerSize": 0,
-                "workerSizeId": 0,
-                "numberOfWorkers": 1
-              },
+              "properties": {},
               "sku": {
                 "name": "Standard",
                 "tier": "S1"
