@@ -1,0 +1,15 @@
+# This pipeline test a self hosted agent in ACI
+
+trigger:
+- main
+
+pool:
+  name: AciPool
+
+steps:
+- script: echo Hello, world!
+  displayName: 'Run a one-line script'
+
+- script: |
+    echo I am running inside ACI    
+  displayName: 'Run a multi-line script'
