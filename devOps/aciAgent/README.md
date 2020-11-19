@@ -15,20 +15,15 @@ This provide a self hosted agent running in Azure Container Instance, the advant
 
 Here the official [documentation](https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/docker?view=azure-devops)
 
-To create a ready environment to test just use the main.json ARM template file.  This ARM template was created using Bicep.  ** AT THIS MOMENT BICEP IS NOT READY FOR PRODUCTION **
+To create a ready environment to test just use the the deploy.ps1 file with the parameter **-pat** that represent
+your personnal access token in Azure DevOps
 
-Once your image is created you will need to push it to an Azure Container Registry, there our official [documentation]
-
-** IMPORTANT, this sample is for Linux Container, the Microsoft doc show how to use Windows Container **
-
-`
-az acr build --image dockeragent:latest --registry $acr --file Dockerfile .
-`
-
-Now the image is pushed in the ACR
+This will create a VNET where the Container will run inside it, with a VNET no external traffic will be able to reach
+the ACI.  The limitation with this you won't be able to use **managed identity** and only the **PAT**.
 
 This sample was created following two interesting article
 
 [First one](https://blog.jcorioland.io/archives/2020/06/08/terraform-azurerm-azure-container-instance-devops-agent.html)
 
 [Second one](https://devblogs.microsoft.com/devops/azure-devops-agents-on-azure-container-instances-aci/)
+
