@@ -1,0 +1,28 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- main
+
+pool:
+  name: VmPool
+
+stages:
+  - stage: dev
+    displayName: DEV
+    jobs:
+      - deployment: deploy
+        displayName: Deploy
+        environment: 'Private AKS Dev'
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: KubernetesManifest@0
+                  inputs:
+                    action: 'deploy'
+                    kubernetesServiceConnection: 'Private AKS Connection Dev'
+                    namespace: 'dev'
+                    manifests: 'nicep/aks/workload/vote.yml'
