@@ -6,6 +6,8 @@
 
 This demo install an AKS cluster with protected Egress
 
+[![Build Status](https://dev.azure.com/hugirardsandbox/azureScripts/_apis/build/status/DeployAks?branchName=master)](https://dev.azure.com/hugirardsandbox/azureScripts/_build/latest?definitionId=43&branchName=master)
+
 # Runbook
 
 ## ScalueUnitCosmosDB
