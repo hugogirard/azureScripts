@@ -28,6 +28,7 @@ jobs:
             chmod +x ./bicep
             # Add bicep to your PATH (requires admin)
             sudo mv ./bicep /usr/local/bin/bicep
+            bicep --version
       - task: Bash@3
         displayName: Compile bicep files
         inputs:
