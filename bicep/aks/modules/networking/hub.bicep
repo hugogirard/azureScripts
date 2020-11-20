@@ -4,9 +4,17 @@ param addressPrefixSubnetFw string
 param addressPrefixJumpboxSubnet string
 
 
+resource nsgJumpbox 'Microsoft.Network/networkSecurityGroups@2019-02-01' = {
+  name: 'nsg-jumpbox'
+  location: location
+}
+
 resource hubvnet 'Microsoft.Network/virtualNetworks@2020-06-01' = {
   name: 'vnet-hub'
   location: location
+  dependsOn: [
+    nsgJumpbox
+  ]
   properties: {
     addressSpace: {
       addressPrefixes: [
@@ -24,6 +32,9 @@ resource hubvnet 'Microsoft.Network/virtualNetworks@2020-06-01' = {
         name: 'jumpboxSubnet'
         properties: {
           addressPrefix: addressPrefixJumpboxSubnet
+          networkSecurityGroup: {
+            id: nsgJumpbox.id
+          }
         }
       }
     ]

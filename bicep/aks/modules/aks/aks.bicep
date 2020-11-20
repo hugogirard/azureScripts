@@ -77,3 +77,5 @@ resource addRbacAks 'Microsoft.Network/virtualNetworks/providers/roleAssignments
     principalType: 'ServicePrincipal'
   }
 }
+
+output aksPrincipalId string = reference(aks.id, '2020-03-01', 'Full').identity.principalId

@@ -33,7 +33,7 @@ resource nic 'Microsoft.Network/networkInterfaces@2020-06-01' = {
           subnet: {
             id: subnetId
           }
-          privateIPAllocationMethod: 'Static'
+          privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
             id: pip.id
           }
@@ -77,7 +77,7 @@ resource vm 'Microsoft.Compute/virtualMachines@2020-06-01' = {
     osProfile: {
       computerName: 'jumpbox'
       adminUsername: username
-      adminPassword: password      
+      adminPassword: password
     }
   }
 }
