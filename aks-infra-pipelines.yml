@@ -23,12 +23,8 @@ jobs:
           targetType: 'inline'
           script: |                                    
             # Fetch the latest Bicep CLI binary
-            sudo curl -Lo bicep https://github.com/Azure/bicep/releases/latest/download/bicep-linux-x64
-            # Mark it as executable
-            sudo chmod +x ./bicep
-            # Add bicep to your PATH (requires admin)
-            sudo mv ./bicep /usr/local/bin/bicep
-            bicep --version
+            cd $(Build.ArtifactStagingDirectory)
+            ls
       - task: Bash@3
         displayName: Compile bicep files
         inputs:
