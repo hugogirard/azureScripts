@@ -22,7 +22,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            bicep build $(Build.SourcesDirectory)/bicep/aksPrivate/aks/main.bicep
+            bicep build bicep/aksPrivate/aks/main.bicep
   - job: PublishARM
     displayName: Publish ARM template
     dependsOn: Bicep
