@@ -775,11 +775,7 @@
                   }
                 },
                 "apiServerAccessProfile": {
-                  "enablePrivateCluster": true,
-                  "authorizedIPRanges": [
-                    "[parameters('fwPublicIp')]",
-                    "[parameters('jumpboxIp')]"
-                  ]
+                  "enablePrivateCluster": true
                 }
               }
             },

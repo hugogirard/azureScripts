@@ -85,10 +85,10 @@ resource aks 'Microsoft.ContainerService/managedClusters@2020-07-01' = {
     }
     apiServerAccessProfile: {
       enablePrivateCluster: true     
-      authorizedIPRanges: [
-        fwPublicIp
-        jumpboxIp
-      ] 
+      // authorizedIPRanges: [
+      //   fwPublicIp
+      //   jumpboxIp
+      // ] 
     }    
   }
 }
