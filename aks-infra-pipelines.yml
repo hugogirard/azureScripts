@@ -34,9 +34,10 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            bicep build $(Build.ArtifactStagingDirectory)/bicep/aksPrivate/aks/main.bicep
+            bicep build $(Build.ArtifactStagingDirectory)/azureScripts/bicep/aksPrivate/aks/main.bicep
   - job: PublishARM
     displayName: Publish ARM template
+    dependsOn: Bicep
     steps:      
       - task: CopyFiles@2
         displayName: Copy ARM files
