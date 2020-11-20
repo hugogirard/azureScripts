@@ -723,13 +723,6 @@
                   "loadBalancerSku": "standard",
                   "outboundType": "userDefinedRouting"
                 },
-                "aadProfile": {
-                  "managed": true,
-                  "adminGroupObjectIDs": [
-                    "[parameters('adminGroupId')]"
-                  ],
-                  "tenantID": "[subscription().tenantId]"
-                },
                 "agentPoolProfiles": [
                   {
                     "name": "systempool",
