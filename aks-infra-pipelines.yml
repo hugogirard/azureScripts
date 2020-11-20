@@ -6,7 +6,7 @@ trigger:
      - '*'
 
 pool:
-  vmImage: 'ubuntu-latest'
+  name: VmPool
 
 variables:
   location: eastus
