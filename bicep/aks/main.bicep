@@ -5,6 +5,7 @@ param addressPrefixSubnetFw string
 param addressJumpboxSubnet string
 param addressPrefixSubnetAks string
 param adminUsername string
+param adminPassword string
 param sshKey string
 
 module hubvnet './modules/networking/hub.bicep' = {
@@ -14,6 +15,16 @@ module hubvnet './modules/networking/hub.bicep' = {
     addressPrefixHub: addressPrefixHub
     addressPrefixJumpboxSubnet: addressJumpboxSubnet
     addressPrefixSubnetFw: addressPrefixSubnetFw
+  }
+}
+
+module jumpbox './modules/compute/jumpbox.bicep' = {
+  name: 'jumpbox'
+  params: {
+    location: location
+    subnetId: hubvnet.outputs.jumboxSubnetId
+    username: adminUsername
+    password: adminPassword
   }
 }
 

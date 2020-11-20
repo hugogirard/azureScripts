@@ -33,5 +33,6 @@ resource hubvnet 'Microsoft.Network/virtualNetworks@2020-06-01' = {
 
 
 output fwSubnetId string = hubvnet.properties.subnets[0].id
+output jumboxSubnetId string = hubvnet.properties.subnets[1].id
 output hubVnetId string = hubvnet.id
 output vnetName string = hubvnet.name
