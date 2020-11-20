@@ -28,6 +28,28 @@ jobs:
             chmod +x ./bicep
             # Add bicep to your PATH (requires admin)
             sudo mv ./bicep /usr/local/bin/bicep
+      - task: Bash@3
+        displayName: Compile bicep files
+        inputs:
+          targetType: inline
+          script: |
+            bicep build $(Build.ArtifactStagingDirectory)/bicep/aksPrivate/aks/main.bicep
+  - job: PublishARM
+    displayName: Publish ARM template
+    steps:      
+      - task: CopyFiles@2
+        displayName: Copy ARM files
+        inputs:
+          SourceFolder: '$(Build.ArtifactStagingDirectory)/bicep/aksPrivate/aks/'
+          Contents: 'main.json'
+          TargetFolder: '$(build.artifactStagingDirectory)'
+      - task: PublishBuildArtifacts@1
+        displayName: Publish Artifacts
+        inputs:
+          PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+          ArtifactName: 'BicepArtifacts'
+          publishLocation: 'Container'
+
 
 #steps:
   # - task: replacetokens@3
