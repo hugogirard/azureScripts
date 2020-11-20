@@ -13,8 +13,18 @@ stages:
   - stage: dev
     displayName: DEV
     jobs:
-      - deployment: deploy
+      - job: Echo
+        steps:
+        - task: Bash@3
+          inputs:
+            targetType: 'inline'
+            script: |
+              # Write your commands here
+              
+              echo 'Hello world'
+      - deployment: deploy      
         displayName: Deploy
+        dependsOn: Echo
         environment: 'Private AKS Dev'
         strategy:
           runOnce:
