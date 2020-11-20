@@ -23,7 +23,7 @@ jobs:
           targetType: 'inline'
           script: |                                    
             # Fetch the latest Bicep CLI binary
-            cd $(Build.ArtifactStagingDirectory)
+            #cd $(Build.ArtifactStagingDirectory)
             ls
       - task: Bash@3
         displayName: Compile bicep files
