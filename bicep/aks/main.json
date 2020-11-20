@@ -778,14 +778,22 @@
                   "enablePrivateCluster": true
                 }
               }
+            },
+            {
+              "type": "Microsoft.Network/virtualNetworks/providers/roleAssignments",
+              "apiVersion": "2018-09-01-preview",
+              "name": "[concat(split(parameters('vnetId'), '/')[8], '/Microsoft.Authorization/', guid(resourceGroup().id, variables('networkContributorId'), '-aks-system-assigned-managed-identity-ilb'))]",
+              "properties": {
+                "roleDefinitionId": "[variables('networkContributorId')]",
+                "principalId": "[reference(resourceId('Microsoft.ContainerService/managedClusters', 'aks-egress'), '2020-03-01', 'Full').identity.principalId]",
+                "scope": "[parameters('vnetId')]",
+                "principalType": "ServicePrincipal"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.ContainerService/managedClusters', 'aks-egress')]"
+              ]
             }
-          ],
-          "outputs": {
-            "aksPrincipalId": {
-              "type": "string",
-              "value": "[reference(resourceId('Microsoft.ContainerService/managedClusters', 'aks-egress'), '2020-03-01', 'Full').identity.principalId]"
-            }
-          }
+          ]
         }
       },
       "dependsOn": [
