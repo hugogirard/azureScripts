@@ -6,64 +6,36 @@ trigger:
      - '*'
 
 pool:
-  name: VmPool
+  vmImage: 'ubuntu-latest'
 
 variables:
   location: eastus
   resourceGroupName: 'aks-demo-rg'
   sp: 'SpDevOps'
 
-jobs:
-  - job: Bicep
-    displayName: Compile Bicep files
-    steps:      
-      - task: Bash@3
-        displayName: Compile bicep files
-        inputs:
-          targetType: inline
-          script: |
-            bicep build bicep/aksPrivate/aks/main.bicep
-  - job: PublishARM
-    displayName: Publish ARM template
-    dependsOn: Bicep
-    steps:      
-      - task: CopyFiles@2
-        displayName: Copy ARM files
-        inputs:
-          SourceFolder: '$(Build.ArtifactStagingDirectory)/bicep/aksPrivate/aks/'
-          Contents: 'main.json'
-          TargetFolder: '$(build.artifactStagingDirectory)'
-      - task: PublishBuildArtifacts@1
-        displayName: Publish Artifacts
-        inputs:
-          PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-          ArtifactName: 'BicepArtifacts'
-          publishLocation: 'Container'
-
-
-#steps:
-  # - task: replacetokens@3
-  #   displayName: Replace Variables
-  #   inputs:
-  #     targetFiles: 'bicep/aks/parameters/main.parameters.json'
-  #     encoding: 'auto'
-  #     writeBOM: true
-  #     actionOnMissing: 'warn'
-  #     keepToken: false
-  #     tokenPrefix: '__'
-  #     tokenSuffix: '__'
-  #     useLegacyPattern: false
-  #     enableTelemetry: true
-  # - task: AzureResourceManagerTemplateDeployment@3
-  #   displayName: Deploy AKS    
-  #   inputs:
-  #     deploymentScope: 'Resource Group'
-  #     azureResourceManagerConnection: $(sp)
-  #     subscriptionId: $(subscriptionId)
-  #     action: 'Create Or Update Resource Group'
-  #     resourceGroupName: '$(resourceGroupName)'
-  #     location: '$(location)'
-  #     templateLocation: 'Linked artifact'
-  #     csmFile: 'bicep/aks/main.json'
-  #     csmParametersFile: 'bicep/aks/parameters/main.parameters.json'
-  #     deploymentMode: 'Incremental'
+steps:
+  - task: replacetokens@3
+    displayName: Replace Variables
+    inputs:
+      targetFiles: 'bicep/aks/parameters/main.parameters.json'
+      encoding: 'auto'
+      writeBOM: true
+      actionOnMissing: 'warn'
+      keepToken: false
+      tokenPrefix: '__'
+      tokenSuffix: '__'
+      useLegacyPattern: false
+      enableTelemetry: true
+  - task: AzureResourceManagerTemplateDeployment@3
+    displayName: Deploy AKS    
+    inputs:
+      deploymentScope: 'Resource Group'
+      azureResourceManagerConnection: $(sp)
+      subscriptionId: $(subscriptionId)
+      action: 'Create Or Update Resource Group'
+      resourceGroupName: '$(resourceGroupName)'
+      location: '$(location)'
+      templateLocation: 'Linked artifact'
+      csmFile: 'bicep/aks/main.json'
+      csmParametersFile: 'bicep/aks/parameters/main.parameters.json'
+      deploymentMode: 'Incremental'
