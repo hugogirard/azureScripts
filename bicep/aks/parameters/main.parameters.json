@@ -28,6 +28,9 @@
         },                
         "sshKey": {
             "value": "__sshkey__"
+        },
+        "adminGroupId": {
+            "value": "__adminGroupId__"
         }
     }
 }

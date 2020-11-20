@@ -7,6 +7,7 @@ param addressPrefixSubnetAks string
 param adminUsername string
 param adminPassword string
 param sshKey string
+param adminGroupId string
 
 module hubvnet './modules/networking/hub.bicep' = {
   name: 'hubvnet'
@@ -60,6 +61,7 @@ module aks './modules/aks/aks.bicep' = {
   name: 'aks'
   dependsOn: [
     spokevnet
+    jumpbox
   ]
   params: {
     location: location
@@ -68,5 +70,7 @@ module aks './modules/aks/aks.bicep' = {
     adminUsername: adminUsername
     sshKey: sshKey
     vnetId: spokevnet.outputs.vnetId
+    adminGroupId: adminGroupId
+    jumpboxIp: jumpbox.outputs.ip
   }
 }

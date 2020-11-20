@@ -81,3 +81,5 @@ resource vm 'Microsoft.Compute/virtualMachines@2020-06-01' = {
     }
   }
 }
+
+output ip string = pip.properties.ipAddress

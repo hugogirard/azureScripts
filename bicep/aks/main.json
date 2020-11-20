@@ -28,6 +28,9 @@
     },
     "sshKey": {
       "type": "string"
+    },
+    "adminGroupId": {
+      "type": "string"
     }
   },
   "functions": [],
@@ -255,7 +258,13 @@
                 "[resourceId('Microsoft.Network/networkInterfaces', 'jumpbox-nic')]"
               ]
             }
-          ]
+          ],
+          "outputs": {
+            "ip": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.Network/publicIPAddresses', 'jumpbox-pip')).ipAddress]"
+            }
+          }
         }
       },
       "dependsOn": [
@@ -640,6 +649,12 @@
           },
           "vnetId": {
             "value": "[reference(extensionResourceId(resourceGroup().id, 'Microsoft.Resources/deployments', 'spokevnet'), '2019-10-01').outputs.vnetId.value]"
+          },
+          "adminGroupId": {
+            "value": "[parameters('adminGroupId')]"
+          },
+          "jumpboxIp": {
+            "value": "[reference(extensionResourceId(resourceGroup().id, 'Microsoft.Resources/deployments', 'jumpbox'), '2019-10-01').outputs.ip.value]"
           }
         },
         "template": {
@@ -662,6 +677,12 @@
               "type": "string"
             },
             "vnetId": {
+              "type": "string"
+            },
+            "adminGroupId": {
+              "type": "string"
+            },
+            "jumpboxIp": {
               "type": "string"
             }
           },
@@ -695,12 +716,19 @@
                   "loadBalancerSku": "standard",
                   "outboundType": "userDefinedRouting"
                 },
+                "aadProfile": {
+                  "managed": true,
+                  "adminGroupObjectIDs": [
+                    "[parameters('adminGroupId')]"
+                  ],
+                  "tenantID": "[subscription().tenantId]"
+                },
                 "agentPoolProfiles": [
                   {
                     "name": "systempool",
                     "count": 2,
-                    "vmSize": "Standard_DS3_v2",
-                    "osDiskSizeGB": 100,
+                    "vmSize": "Standard_DS2_v2",
+                    "osDiskSizeGB": 512,
                     "vnetSubnetID": "[parameters('aksSubnetId')]",
                     "osType": "Linux",
                     "maxCount": 5,
@@ -708,7 +736,25 @@
                     "scaleSetPriority": "Regular",
                     "enableAutoScaling": true,
                     "mode": "System",
-                    "type": "VirtualMachineScaleSets"
+                    "type": "VirtualMachineScaleSets",
+                    "enableNodePublicIP": false,
+                    "maxPods": 30
+                  },
+                  {
+                    "name": "workloadpool",
+                    "count": 2,
+                    "vmSize": "Standard_DS2_v2",
+                    "osDiskSizeGB": 512,
+                    "vnetSubnetID": "[parameters('aksSubnetId')]",
+                    "osType": "Linux",
+                    "maxCount": 5,
+                    "minCount": 2,
+                    "scaleSetPriority": "Regular",
+                    "enableAutoScaling": true,
+                    "mode": "User",
+                    "type": "VirtualMachineScaleSets",
+                    "enableNodePublicIP": false,
+                    "maxPods": 30
                   }
                 ],
                 "linuxProfile": {
@@ -722,9 +768,10 @@
                   }
                 },
                 "apiServerAccessProfile": {
-                  "enablePrivateCluster": false,
+                  "enablePrivateCluster": true,
                   "authorizedIPRanges": [
-                    "[parameters('fwPublicIp')]"
+                    "[parameters('fwPublicIp')]",
+                    "[parameters('jumpboxIp')]"
                   ]
                 }
               }
@@ -754,6 +801,7 @@
       },
       "dependsOn": [
         "[extensionResourceId(resourceGroup().id, 'Microsoft.Resources/deployments', 'firewall')]",
+        "[extensionResourceId(resourceGroup().id, 'Microsoft.Resources/deployments', 'jumpbox')]",
         "[extensionResourceId(resourceGroup().id, 'Microsoft.Resources/deployments', 'spokevnet')]"
       ]
     }
