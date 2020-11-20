@@ -23,6 +23,9 @@
     "adminUsername": {
       "type": "string"
     },
+    "adminPassword": {
+      "type": "string"
+    },
     "sshKey": {
       "type": "string"
     }
@@ -104,6 +107,10 @@
               "type": "string",
               "value": "[reference(resourceId('Microsoft.Network/virtualNetworks', 'vnet-hub')).subnets[0].id]"
             },
+            "jumboxSubnetId": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.Network/virtualNetworks', 'vnet-hub')).subnets[1].id]"
+            },
             "hubVnetId": {
               "type": "string",
               "value": "[resourceId('Microsoft.Network/virtualNetworks', 'vnet-hub')]"
@@ -115,6 +122,133 @@
           }
         }
       }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2019-10-01",
+      "name": "jumpbox",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "subnetId": {
+            "value": "[reference(extensionResourceId(resourceGroup().id, 'Microsoft.Resources/deployments', 'hubvnet'), '2019-10-01').outputs.jumboxSubnetId.value]"
+          },
+          "username": {
+            "value": "[parameters('adminUsername')]"
+          },
+          "password": {
+            "value": "[parameters('adminPassword')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "parameters": {
+            "location": {
+              "type": "string"
+            },
+            "subnetId": {
+              "type": "string"
+            },
+            "username": {
+              "type": "secureString"
+            },
+            "password": {
+              "type": "secureString"
+            }
+          },
+          "functions": [],
+          "resources": [
+            {
+              "type": "Microsoft.Network/publicIPAddresses",
+              "apiVersion": "2020-06-01",
+              "name": "jumpbox-pip",
+              "location": "[parameters('location')]",
+              "sku": {
+                "name": "Standard"
+              },
+              "properties": {
+                "publicIPAllocationMethod": "Static",
+                "publicIPAddressVersion": "IPv4"
+              }
+            },
+            {
+              "type": "Microsoft.Network/networkInterfaces",
+              "apiVersion": "2020-06-01",
+              "name": "jumpbox-nic",
+              "location": "[parameters('location')]",
+              "properties": {
+                "ipConfigurations": [
+                  {
+                    "name": "ipconfig",
+                    "properties": {
+                      "subnet": {
+                        "id": "[parameters('subnetId')]"
+                      },
+                      "privateIPAllocationMethod": "Static",
+                      "publicIPAddress": {
+                        "id": "[resourceId('Microsoft.Network/publicIPAddresses', 'jumpbox-pip')]"
+                      }
+                    }
+                  }
+                ]
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/publicIPAddresses', 'jumpbox-pip')]"
+              ]
+            },
+            {
+              "type": "Microsoft.Compute/virtualMachines",
+              "apiVersion": "2020-06-01",
+              "name": "jumpbox",
+              "location": "[parameters('location')]",
+              "properties": {
+                "hardwareProfile": {
+                  "vmSize": "Standard_B1s"
+                },
+                "storageProfile": {
+                  "osDisk": {
+                    "createOption": "FromImage",
+                    "managedDisk": {
+                      "storageAccountType": "Premium_LRS"
+                    }
+                  },
+                  "imageReference": {
+                    "publisher": "Canonical",
+                    "offer": "UbuntuServer",
+                    "sku": "18.04-LTS",
+                    "version": "latest"
+                  }
+                },
+                "networkProfile": {
+                  "networkInterfaces": [
+                    {
+                      "id": "[resourceId('Microsoft.Network/networkInterfaces', 'jumpbox-nic')]"
+                    }
+                  ]
+                },
+                "osProfile": {
+                  "computerName": "jumpbox",
+                  "adminUsername": "[parameters('username')]",
+                  "adminPassword": "[parameters('password')]"
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/networkInterfaces', 'jumpbox-nic')]"
+              ]
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "[extensionResourceId(resourceGroup().id, 'Microsoft.Resources/deployments', 'hubvnet')]"
+      ]
     },
     {
       "type": "Microsoft.Resources/deployments",

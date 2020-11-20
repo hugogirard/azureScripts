@@ -3,15 +3,18 @@ param(
     [string]$resourceGroup = 'aci-demo-agent-rg',
     [string]$location = 'eastus',
     [string]$pat,
-    [string]$org='https://dev.azure.com/hugirardsandbox/'
+    [string]$vnetIntegration=$true
 )
 
+# Variable
+$org='https://dev.azure.com/hugirardsandbox/'  
 
 $id = az group create -n $resourceGroup -l $location --query id
 
 $tmp = $id -split '/'
 $suffix = $tmp[2] -replace "-",""
 $acrname = "acr$suffix"
+
 
 # Create an ACR, when ACI run in a VNET it doesn't support managed identity for now
 az acr create -n $acrname -g $resourceGroup --admin-enabled --sku Standard
@@ -28,6 +31,13 @@ $password = $result.passwords[0].value
 $server = "$acrname.azurecr.io"
 $imagename = "$acrname.azurecr.io/dockeragent:latest"
 
-az container create -g $resourceGroup --name 'devopsagent' --image $imagename --cpu 1 --memory 1.5 --registry-login-server $server --registry-username $username --registry-password $password `
---environment-variables AZP_URL=$org AZP_TOKEN=$pat AZP_AGENT_NAME=aciagent AZP_POOL=AciPool --ports 80 443
+if ($vnetIntegration) {
+    az container create -g $resourceGroup --name 'devopsagent' --image $imagename --cpu 1 --memory 1.5 --registry-login-server $server --registry-username $username --registry-password $password `
+    --environment-variables AZP_URL=$org AZP_TOKEN=$pat AZP_AGENT_NAME=aciagent AZP_POOL=AciPool `
+    --vnet aci-vnet --vnet-address-prefix 10.0.0.0/16 --subnet aci-subnet --subnet-address-prefix 10.0.0.0/24
+} else {
+    az container create -g $resourceGroup --name 'devopsagent' --image $imagename --cpu 1 --memory 1.5 --registry-login-server $server --registry-username $username --registry-password $password `
+    --environment-variables AZP_URL=$org AZP_TOKEN=$pat AZP_AGENT_NAME=aciagent AZP_POOL=AciPool
+}
+
 
