@@ -18,19 +18,11 @@ jobs:
     displayName: Compile Bicep files
     steps:      
       - task: Bash@3
-        displayName: Install Bicep
-        inputs:
-          targetType: 'inline'
-          script: |                                    
-            # Fetch the latest Bicep CLI binary
-            #cd $(Build.ArtifactStagingDirectory)
-            ls
-      - task: Bash@3
         displayName: Compile bicep files
         inputs:
           targetType: inline
           script: |
-            bicep build $(Build.ArtifactStagingDirectory)/azureScripts/bicep/aksPrivate/aks/main.bicep
+            bicep build $(Build.SourcesDirectory)/bicep/aksPrivate/aks/main.bicep
   - job: PublishARM
     displayName: Publish ARM template
     dependsOn: Bicep
