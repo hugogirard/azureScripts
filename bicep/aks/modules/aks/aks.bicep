@@ -32,13 +32,13 @@ resource aks 'Microsoft.ContainerService/managedClusters@2020-07-01' = {
       loadBalancerSku: 'standard'
       outboundType: 'userDefinedRouting'    
     }     
-    // aadProfile: {
-    //   managed: true
-    //   adminGroupObjectIDs: [
-    //     adminGroupId
-    //   ]
-    //   tenantID: subscription().tenantId
-    // }       
+    aadProfile: {
+      managed: true
+      adminGroupObjectIDs: [
+        adminGroupId
+      ]
+      tenantID: subscription().tenantId
+    }       
     agentPoolProfiles: [
       {
         name: 'systempool'
@@ -93,18 +93,18 @@ resource aks 'Microsoft.ContainerService/managedClusters@2020-07-01' = {
   }
 }
 
-resource addRbacAks 'Microsoft.Network/virtualNetworks/providers/roleAssignments@2018-09-01-preview' = {
-  name: concat(split(vnetId,'/')[8],'/Microsoft.Authorization/',guid(resourceGroup().id,networkContributorId,'-aks-system-assigned-managed-identity-ilb'))
-  dependsOn: [
-    aks
-  ]
-  properties: {
-    roleDefinitionId: networkContributorId
-    principalId: reference(aks.id, '2020-03-01', 'Full').identity.principalId
-    scope: vnetId
-    principalType: 'ServicePrincipal'
-  }
-}
+// resource addRbacAks 'Microsoft.Network/virtualNetworks/providers/roleAssignments@2018-09-01-preview' = {
+//   name: concat(split(vnetId,'/')[8],'/Microsoft.Authorization/',guid(resourceGroup().id,networkContributorId,'-aks-system-assigned-managed-identity-ilb'))
+//   dependsOn: [
+//     aks
+//   ]
+//   properties: {
+//     roleDefinitionId: networkContributorId
+//     principalId: reference(aks.id, '2020-03-01', 'Full').identity.principalId
+//     scope: vnetId
+//     principalType: 'ServicePrincipal'
+//   }
+// }
 
 // ADD Pull role container registry
 // resource pullRole 'Microsoft.ContainerRegistry/registries/providers/roleAssignments@2018-09-01-preview' = {
