@@ -22,10 +22,7 @@
         },
         "adminUsername": {
             "value": "__username__"
-        },
-        "adminPassword": {
-            "value": "adminPassword"
-        },                
+        },              
         "sshKey": {
             "value": "__sshkey__"
         },
