@@ -12,30 +12,48 @@ variables:
   location: eastus
   resourceGroupName: 'aks-demo-rg'
   sp: 'SpDevOps'
-  
-steps:
-  - task: replacetokens@3
-    displayName: Replace Variables
-    inputs:
-      targetFiles: 'bicep/aks/parameters/main.parameters.json'
-      encoding: 'auto'
-      writeBOM: true
-      actionOnMissing: 'warn'
-      keepToken: false
-      tokenPrefix: '__'
-      tokenSuffix: '__'
-      useLegacyPattern: false
-      enableTelemetry: true
-  - task: AzureResourceManagerTemplateDeployment@3
-    displayName: Deploy AKS    
-    inputs:
-      deploymentScope: 'Resource Group'
-      azureResourceManagerConnection: $(sp)
-      subscriptionId: $(subscriptionId)
-      action: 'Create Or Update Resource Group'
-      resourceGroupName: '$(resourceGroupName)'
-      location: '$(location)'
-      templateLocation: 'Linked artifact'
-      csmFile: 'bicep/aks/main.json'
-      csmParametersFile: 'bicep/aks/parameters/main.parameters.json'
-      deploymentMode: 'Incremental'
+
+jobs:
+  - job: Bicep
+    displayName: Compile Bicep files
+    steps:      
+      - task: Bash@3
+        displayName: Install Bicep
+        inputs:
+          targetType: 'inline'
+          script: |                                    
+            $installPath = "$env:USERPROFILE\.bicep"
+            $installDir = New-Item -ItemType Directory -Path $installPath -Force
+            $installDir.Attributes += 'Hidden'            
+            (New-Object Net.WebClient).DownloadFile("https://github.com/Azure/bicep/releases/latest/download/bicep-win-x64.exe", "$installPath\bicep.exe")            
+            $currentPath = (Get-Item -path "HKCU:\Environment" ).GetValue('Path', '', 'DoNotExpandEnvironmentNames')
+            if (-not $currentPath.Contains("%USERPROFILE%\.bicep")) { setx PATH ($currentPath + ";%USERPROFILE%\.bicep") }
+            if (-not $env:path.Contains($installPath)) { $env:path += ";$installPath" }
+            bicep --help
+
+#steps:
+  # - task: replacetokens@3
+  #   displayName: Replace Variables
+  #   inputs:
+  #     targetFiles: 'bicep/aks/parameters/main.parameters.json'
+  #     encoding: 'auto'
+  #     writeBOM: true
+  #     actionOnMissing: 'warn'
+  #     keepToken: false
+  #     tokenPrefix: '__'
+  #     tokenSuffix: '__'
+  #     useLegacyPattern: false
+  #     enableTelemetry: true
+  # - task: AzureResourceManagerTemplateDeployment@3
+  #   displayName: Deploy AKS    
+  #   inputs:
+  #     deploymentScope: 'Resource Group'
+  #     azureResourceManagerConnection: $(sp)
+  #     subscriptionId: $(subscriptionId)
+  #     action: 'Create Or Update Resource Group'
+  #     resourceGroupName: '$(resourceGroupName)'
+  #     location: '$(location)'
+  #     templateLocation: 'Linked artifact'
+  #     csmFile: 'bicep/aks/main.json'
+  #     csmParametersFile: 'bicep/aks/parameters/main.parameters.json'
+  #     deploymentMode: 'Incremental'
