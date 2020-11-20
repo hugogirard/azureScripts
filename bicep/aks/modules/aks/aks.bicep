@@ -32,13 +32,13 @@ resource aks 'Microsoft.ContainerService/managedClusters@2020-07-01' = {
       loadBalancerSku: 'standard'
       outboundType: 'userDefinedRouting'    
     }     
-    aadProfile: {
-      managed: true
-      adminGroupObjectIDs: [
-        adminGroupId
-      ]
-      tenantID: subscription().tenantId
-    }       
+    // aadProfile: {
+    //   managed: true
+    //   adminGroupObjectIDs: [
+    //     adminGroupId
+    //   ]
+    //   tenantID: subscription().tenantId
+    // }       
     agentPoolProfiles: [
       {
         name: 'systempool'
