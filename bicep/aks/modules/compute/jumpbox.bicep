@@ -3,9 +3,7 @@ param subnetId string
 param username string {
   secure: true
 }
-param password string {
-  secure: true
-}
+param sshKey string
 
 resource pip 'Microsoft.Network/publicIpAddresses@2020-06-01' = {
   name: 'jumpbox-pip'
@@ -73,11 +71,20 @@ resource vm 'Microsoft.Compute/virtualMachines@2020-06-01' = {
           id: nic.id
         }
       ]
-    }
+    }    
     osProfile: {
-      computerName: 'jumpbox'
-      adminUsername: username
-      adminPassword: password
+      computerName: 'jumpbox'      
+      linuxConfiguration: {
+        disablePasswordAuthentication: true
+        ssh: {
+          publicKeys: [
+            {
+              path: concat('/home/',username,,'/.ssh/authorized_keys')
+              keyData: sshKey
+            }            
+          ]
+        }
+      }   
     }
   }
 }

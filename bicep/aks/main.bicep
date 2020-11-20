@@ -5,7 +5,6 @@ param addressPrefixSubnetFw string
 param addressJumpboxSubnet string
 param addressPrefixSubnetAks string
 param adminUsername string
-param adminPassword string
 param sshKey string
 param adminGroupId string
 
@@ -25,7 +24,7 @@ module jumpbox './modules/compute/jumpbox.bicep' = {
     location: location
     subnetId: hubvnet.outputs.jumboxSubnetId
     username: adminUsername
-    password: adminPassword
+    sshKey: sshKey
   }
 }
 
