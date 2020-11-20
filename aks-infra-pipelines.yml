@@ -1,7 +1,9 @@
 # Deploy private cluster using ARM template
 
 trigger:
-- master
+ branches:
+   include:
+     - '*'
 
 pool:
   vmImage: 'ubuntu-latest'
