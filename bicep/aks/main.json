@@ -247,6 +247,7 @@
                 },
                 "osProfile": {
                   "computerName": "jumpbox",
+                  "adminUsername": "[parameters('username')]",
                   "linuxConfiguration": {
                     "disablePasswordAuthentication": true,
                     "ssh": {

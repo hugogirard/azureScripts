@@ -74,8 +74,9 @@ resource vm 'Microsoft.Compute/virtualMachines@2020-06-01' = {
     }    
     osProfile: {
       computerName: 'jumpbox'      
+      adminUsername: username
       linuxConfiguration: {
-        disablePasswordAuthentication: true
+        disablePasswordAuthentication: true        
         ssh: {
           publicKeys: [
             {
