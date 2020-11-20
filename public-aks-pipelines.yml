@@ -7,7 +7,7 @@ trigger:
 - main
 
 pool:
-  vmImage: 'ubuntu-latest'
+  name: VmPool
 
 stages:
   - stage: dev
@@ -22,27 +22,17 @@ stages:
               # Write your commands here
               
               echo 'Hello world'
-        - task: CopyFiles@2
-          inputs:
-            SourceFolder: 'bicep/aks/workload'
-            Contents: 'vote.yml'
-            TargetFolder: drop
-        - task: PublishBuildArtifacts@1
-          inputs:
-            PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-            ArtifactName: 'drop'
-            publishLocation: 'Container'
-      # - deployment: deploy      
-      #   displayName: Deploy
-      #   dependsOn: Echo
-      #   environment: PublicAKS
-      #   strategy:
-      #     runOnce:
-      #       deploy:
-      #         steps:
-      #           - task: KubernetesManifest@0
-      #             inputs:
-      #               action: 'deploy'
-      #               kubernetesServiceConnection: SpAksPublic
-      #               namespace: 'dev'
-      #               manifests: 
+      - deployment: deploy      
+        displayName: Deploy
+        dependsOn: Echo
+        environment: PublicAKS
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: KubernetesManifest@0
+                  inputs:
+                    action: 'deploy'
+                    kubernetesServiceConnection: SpAksPublic
+                    namespace: 'dev'
+                    manifests: 'bicep/aks/workload/vote.yml'
