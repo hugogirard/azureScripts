@@ -25,4 +25,4 @@ stages:
                     action: 'deploy'
                     kubernetesServiceConnection: 'Private AKS Connection Dev'
                     namespace: 'dev'
-                    manifests: 'nicep/aks/workload/vote.yml'
+                    manifests: 'bicep/aks/workload/vote.yml'
