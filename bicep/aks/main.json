@@ -23,9 +23,6 @@
     "adminUsername": {
       "type": "string"
     },
-    "adminPassword": {
-      "type": "string"
-    },
     "sshKey": {
       "type": "string"
     },
@@ -157,8 +154,8 @@
           "username": {
             "value": "[parameters('adminUsername')]"
           },
-          "password": {
-            "value": "[parameters('adminPassword')]"
+          "sshKey": {
+            "value": "[parameters('sshKey')]"
           }
         },
         "template": {
@@ -174,8 +171,8 @@
             "username": {
               "type": "secureString"
             },
-            "password": {
-              "type": "secureString"
+            "sshKey": {
+              "type": "string"
             }
           },
           "functions": [],
@@ -250,8 +247,17 @@
                 },
                 "osProfile": {
                   "computerName": "jumpbox",
-                  "adminUsername": "[parameters('username')]",
-                  "adminPassword": "[parameters('password')]"
+                  "linuxConfiguration": {
+                    "disablePasswordAuthentication": true,
+                    "ssh": {
+                      "publicKeys": [
+                        {
+                          "path": "[concat('/home/', parameters('username'), '/.ssh/authorized_keys')]",
+                          "keyData": "[parameters('sshKey')]"
+                        }
+                      ]
+                    }
+                  }
                 }
               },
               "dependsOn": [

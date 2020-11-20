@@ -79,7 +79,7 @@ resource vm 'Microsoft.Compute/virtualMachines@2020-06-01' = {
         ssh: {
           publicKeys: [
             {
-              path: concat('/home/',username,,'/.ssh/authorized_keys')
+              path: concat('/home/',username,'/.ssh/authorized_keys')
               keyData: sshKey
             }            
           ]
