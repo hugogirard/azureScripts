@@ -21,7 +21,15 @@
       "back": "[concat('backend-', variables('suffix'))]"
     },
     "vnetName": "[concat('vnet-app-', variables('suffix'))]",
-    "vaultName": "[concat('vault-', variables('suffix'))]"
+    "vaultName": "[concat('vault-', variables('suffix'))]",
+    "secrets": {
+      "reference": {
+        "keyVault": {
+          "id": "[resourceId('Microsoft.KeyVault/vaults', variables('vaultName'))]"
+        },
+        "secretName": ""
+      }
+    }
   },
   "resources": [
     {
@@ -107,10 +115,11 @@
       "apiVersion": "2019-08-01",
       "name": "[concat(variables('webAppName').front, '/appsettings')]",
       "properties": {
-        "API": "[format('https://{0}.azurewebsites.net/weather', variables('webAppName').back)]"
+        "API": "[concat('@Microsoft.KeyVault(SecretUri=', reference(resourceId('Microsoft.KeyVault/vaults/secrets', split(concat(variables('vaultName'), '/', 'API'), '/')[0], split(concat(variables('vaultName'), '/', 'API'), '/')[1])).secretUriWithVersion, ')')]"
       },
       "dependsOn": [
-        "[resourceId('Microsoft.Web/sites', variables('webAppName').back)]",
+        "[resourceId('Microsoft.KeyVault/vaults/secrets', split(concat(variables('vaultName'), '/', 'API'), '/')[0], split(concat(variables('vaultName'), '/', 'API'), '/')[1])]",
+        "[resourceId('Microsoft.KeyVault/vaults', variables('vaultName'))]",
         "[resourceId('Microsoft.Web/sites', variables('webAppName').front)]"
       ]
     },
@@ -162,6 +171,18 @@
       "dependsOn": [
         "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetName'))]",
         "[resourceId('Microsoft.Web/sites', variables('webAppName').front)]"
+      ]
+    },
+    {
+      "type": "Microsoft.KeyVault/vaults/secrets",
+      "apiVersion": "2018-02-14",
+      "name": "[concat(variables('vaultName'), '/', 'API')]",
+      "properties": {
+        "value": "[format('https://{0}.azurewebsites.net/weather', variables('webAppName').back)]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.KeyVault/vaults', variables('vaultName'))]",
+        "[resourceId('Microsoft.Web/sites', variables('webAppName').back)]"
       ]
     }
   ]
