@@ -11,15 +11,6 @@ var webAppName = {
 var vnetName = concat('vnet-app-',suffix)
 var vaultName = concat('vault-',suffix)
 
-var secrets = {
-  reference: {
-    'keyVault': {
-      id: vault.id
-    }
-    secretName: ''
-  }
-}
-
 resource vnet 'Microsoft.Network/virtualNetworks@2020-06-01' = {
   name: vnetName
   location: location
@@ -104,6 +95,7 @@ resource appSettings 'Microsoft.Web/sites/config@2019-08-01' = {
   ]
   properties: {
     'API': concat('@Microsoft.KeyVault(SecretUri=',reference(secret.id).secretUriWithVersion,')')
+    'WEBSITE_VNET_ROUTE_ALL': 1
   }
 }
 

@@ -21,15 +21,7 @@
       "back": "[concat('backend-', variables('suffix'))]"
     },
     "vnetName": "[concat('vnet-app-', variables('suffix'))]",
-    "vaultName": "[concat('vault-', variables('suffix'))]",
-    "secrets": {
-      "reference": {
-        "keyVault": {
-          "id": "[resourceId('Microsoft.KeyVault/vaults', variables('vaultName'))]"
-        },
-        "secretName": ""
-      }
-    }
+    "vaultName": "[concat('vault-', variables('suffix'))]"
   },
   "resources": [
     {
@@ -115,7 +107,8 @@
       "apiVersion": "2019-08-01",
       "name": "[concat(variables('webAppName').front, '/appsettings')]",
       "properties": {
-        "API": "[concat('@Microsoft.KeyVault(SecretUri=', reference(resourceId('Microsoft.KeyVault/vaults/secrets', split(concat(variables('vaultName'), '/', 'API'), '/')[0], split(concat(variables('vaultName'), '/', 'API'), '/')[1])).secretUriWithVersion, ')')]"
+        "API": "[concat('@Microsoft.KeyVault(SecretUri=', reference(resourceId('Microsoft.KeyVault/vaults/secrets', split(concat(variables('vaultName'), '/', 'API'), '/')[0], split(concat(variables('vaultName'), '/', 'API'), '/')[1])).secretUriWithVersion, ')')]",
+        "WEBSITE_VNET_ROUTE_ALL": 1
       },
       "dependsOn": [
         "[resourceId('Microsoft.KeyVault/vaults/secrets', split(concat(variables('vaultName'), '/', 'API'), '/')[0], split(concat(variables('vaultName'), '/', 'API'), '/')[1])]",
