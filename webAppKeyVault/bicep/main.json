@@ -67,10 +67,6 @@
       "name": "[variables('appplan')]",
       "location": "[variables('location')]",
       "sku": {
-        "size": "S1",
-        "family": "S",
-        "tier": "Standard",
-        "capacity": 1,
         "name": "S1"
       },
       "kind": "app",

@@ -69,10 +69,6 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2019-08-01' = {
     vnet
   ]
   sku: {
-    size: 'S1'
-    family: 'S'
-    tier: 'Standard'
-    capacity: 1
     name: 'S1'
   }
   kind: 'app'
