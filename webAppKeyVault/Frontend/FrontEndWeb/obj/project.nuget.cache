@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "RDiQpJ+Az/y82GmQ9CQykuttC76dosw6Tr7txsXNyjcfn5J8XziSz2ZEHEjmMWyce539ND5o3ofNidYdguZV1A==",
+  "success": true,
+  "projectFilePath": "C:\\github\\azureWebAppPrivateEndpoint\\src\\Frontend\\FrontEndWeb\\FrontEndWeb.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\hugirard\\.nuget\\packages\\newtonsoft.json\\12.0.3\\newtonsoft.json.12.0.3.nupkg.sha512"
+  ],
+  "logs": []
+}

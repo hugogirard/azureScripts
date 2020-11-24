@@ -185,5 +185,15 @@
         "[resourceId('Microsoft.Web/sites', variables('webAppName').back)]"
       ]
     }
-  ]
+  ],
+  "outputs": {
+    "frontendName": {
+      "type": "string",
+      "value": "[variables('webAppName').front]"
+    },
+    "backendName": {
+      "type": "string",
+      "value": "[variables('webAppName').back]"
+    }
+  }
 }
