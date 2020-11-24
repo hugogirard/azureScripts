@@ -32,13 +32,13 @@ resource aks 'Microsoft.ContainerService/managedClusters@2020-07-01' = {
       loadBalancerSku: 'standard'
       outboundType: 'userDefinedRouting'    
     }     
-    // aadProfile: {
-    //   managed: true
-    //   adminGroupObjectIDs: [
-    //     adminGroupId
-    //   ]
-    //   tenantID: subscription().tenantId
-    // }       
+    aadProfile: {
+      managed: true
+      adminGroupObjectIDs: [
+        adminGroupId
+      ]
+      tenantID: subscription().tenantId
+    }       
     agentPoolProfiles: [
       {
         name: 'systempool'
@@ -84,11 +84,7 @@ resource aks 'Microsoft.ContainerService/managedClusters@2020-07-01' = {
       }
     }
     apiServerAccessProfile: {
-      enablePrivateCluster: true     
-      // authorizedIPRanges: [
-      //   fwPublicIp
-      //   jumpboxIp
-      // ] 
+      enablePrivateCluster: true
     }    
   }
 }
@@ -105,9 +101,4 @@ resource addRbacAks 'Microsoft.Network/virtualNetworks/providers/roleAssignments
     principalType: 'ServicePrincipal'
   }
 }
-
-// ADD Pull role container registry
-// resource pullRole 'Microsoft.ContainerRegistry/registries/providers/roleAssignments@2018-09-01-preview' = {
-//   name: concat()
-// }
 
