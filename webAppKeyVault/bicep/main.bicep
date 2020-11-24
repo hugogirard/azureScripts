@@ -11,24 +11,9 @@ var webAppName = {
 var vnetName = concat('vnet-app-',suffix)
 var vaultName = concat('vault-',suffix)
 
-// resource vault 'Microsoft.KeyVault/vaults@2019-09-01' = {
-//   name: vaultName
-//   location: location  
-//   properties: {
-//     sku: {
-//       family: 'A'
-//       name: 'standard'
-//     }
-//     tenantId: subscription().tenantId
-//   }
-// }
-
 resource vnet 'Microsoft.Network/virtualNetworks@2020-06-01' = {
   name: vnetName
   location: location
-  dependsOn: [
-    //vault
-  ]
   properties: {
     addressSpace: {
       addressPrefixes: [
@@ -74,17 +59,40 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2019-08-01' = {
   kind: 'app'
 }
 
+resource webappBackend 'Microsoft.Web/sites@2019-08-01' = {
+  name: webAppName.back
+  location: location
+  dependsOn: [
+    appServicePlan
+  ]
+  properties: {
+    serverFarmId: appServicePlan.id
+  }
+}
+
+
 resource webappFront 'Microsoft.Web/sites@2019-08-01' = {
   name: webAppName.front
   location: location
   dependsOn: [
     appServicePlan
+    webappBackend
   ]
   identity: {
     type: 'SystemAssigned'
   }
   properties: {
-    serverFarmId: appServicePlan.id
+    serverFarmId: appServicePlan.id    
+  }
+}
+
+resource appSettings 'Microsoft.Web/sites/config@2019-08-01' = {
+  name: concat(webappFront.name,'/appsettings')
+  dependsOn: [
+    webappFront
+  ]
+  properties: {
+    'API': 'https://${webappBackend.name}.azurewebsites.net/weather'
   }
 }
 
@@ -95,5 +103,27 @@ resource frontvnetConnection 'Microsoft.Web/sites/networkConfig@2019-08-01' = {
   ]
   properties: {
     subnetResourceId: vnet.properties.subnets[0].id
+  }
+}
+
+resource vault 'Microsoft.KeyVault/vaults@2019-09-01' = {
+  name: vaultName
+  location: location
+  dependsOn: [
+    vnet
+  ]
+  properties: {
+    sku: {
+      family: 'A'
+      name: 'standard'
+    }
+    tenantId: subscription().tenantId
+    networkAcls: {
+      virtualNetworkRules: [
+        {
+          id: vnet.properties.subnets[0].id
+        }
+      ]
+    }
   }
 }
