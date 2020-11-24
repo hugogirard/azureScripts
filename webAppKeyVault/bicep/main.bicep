@@ -118,6 +118,19 @@ resource vault 'Microsoft.KeyVault/vaults@2019-09-01' = {
       name: 'standard'
     }
     tenantId: subscription().tenantId
+    accessPolicies: [
+      {
+        tenantId: subscription().tenantId
+        objectId: reference(webappFront.id,'2019-08-01','full').identity.principalId
+        permissions: {
+          secrets: [
+            'get'
+            'list'
+          ]
+        }
+
+      }
+    ]
     networkAcls: {
       virtualNetworkRules: [
         {
