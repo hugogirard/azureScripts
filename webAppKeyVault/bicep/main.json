@@ -70,7 +70,8 @@
         "size": "S1",
         "family": "S",
         "tier": "Standard",
-        "capacity": 1
+        "capacity": 1,
+        "name": "S1"
       },
       "kind": "app",
       "dependsOn": [
