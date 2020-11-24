@@ -1,7 +1,7 @@
-param location string
 param vnetAddressSpace string = '10.0.0.0/16'
 param subnetAddressSpace string = '10.0.0.0/24'
 
+var location = resourceGroup().location
 var suffix = uniqueString(resourceGroup().id)
 var appplan = concat('appplan-',suffix)
 var webAppName = {
@@ -10,7 +10,6 @@ var webAppName = {
 }
 var vnetName = concat('vnet-app-',suffix)
 var vaultName = concat('vault-',suffix)
-
 
 // resource vault 'Microsoft.KeyVault/vaults@2019-09-01' = {
 //   name: vaultName

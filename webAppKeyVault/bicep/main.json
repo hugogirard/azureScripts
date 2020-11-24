@@ -2,9 +2,6 @@
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "location": {
-      "type": "string"
-    },
     "vnetAddressSpace": {
       "type": "string",
       "defaultValue": "10.0.0.0/16"
@@ -16,6 +13,7 @@
   },
   "functions": [],
   "variables": {
+    "location": "[resourceGroup().location]",
     "suffix": "[uniqueString(resourceGroup().id)]",
     "appplan": "[concat('appplan-', variables('suffix'))]",
     "webAppName": {
@@ -30,7 +28,7 @@
       "type": "Microsoft.Network/virtualNetworks",
       "apiVersion": "2020-06-01",
       "name": "[variables('vnetName')]",
-      "location": "[parameters('location')]",
+      "location": "[variables('location')]",
       "properties": {
         "addressSpace": {
           "addressPrefixes": [
@@ -46,7 +44,7 @@
                 {
                   "service": "Microsoft.KeyVault",
                   "locations": [
-                    "[parameters('location')]"
+                    "[variables('location')]"
                   ]
                 }
               ],
@@ -67,7 +65,7 @@
       "type": "Microsoft.Web/serverfarms",
       "apiVersion": "2019-08-01",
       "name": "[variables('appplan')]",
-      "location": "[parameters('location')]",
+      "location": "[variables('location')]",
       "sku": {
         "size": "S1",
         "family": "S",
@@ -83,7 +81,7 @@
       "type": "Microsoft.Web/sites",
       "apiVersion": "2019-08-01",
       "name": "[variables('webAppName').front]",
-      "location": "[parameters('location')]",
+      "location": "[variables('location')]",
       "identity": {
         "type": "SystemAssigned"
       },
