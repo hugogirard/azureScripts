@@ -162,4 +162,7 @@ resource secret 'Microsoft.KeyVault/vaults/secrets@2018-02-14' = {
   properties: {    
     value: 'https://${webappBackend.name}.azurewebsites.net/weather'
   }
-}
+} 
+
+output frontendName string = webappFront.name
+output backendName string = webappBackend.name
