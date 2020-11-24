@@ -150,6 +150,8 @@
           }
         ],
         "networkAcls": {
+          "bypass": "AzureServices",
+          "defaultAction": "Deny",
           "virtualNetworkRules": [
             {
               "id": "[reference(resourceId('Microsoft.Network/virtualNetworks', variables('vnetName'))).subnets[0].id]"

@@ -132,6 +132,8 @@ resource vault 'Microsoft.KeyVault/vaults@2019-09-01' = {
       }
     ]
     networkAcls: {
+      bypass: 'AzureServices'
+      defaultAction: 'Deny'
       virtualNetworkRules: [
         {
           id: vnet.properties.subnets[0].id
