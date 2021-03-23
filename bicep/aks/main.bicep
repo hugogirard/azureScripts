@@ -56,20 +56,20 @@ module spokevnet './modules/networking/spoke.bicep' = {
   }
 }
 
-module aks './modules/aks/aks.bicep' = {
-  name: 'aks'
-  dependsOn: [
-    spokevnet
-    jumpbox
-  ]
-  params: {
-    location: location
-    aksSubnetId: spokevnet.outputs.aksSubnetId
-    fwPublicIp: firewall.outputs.fwIp
-    adminUsername: adminUsername
-    sshKey: sshKey
-    vnetId: spokevnet.outputs.vnetId
-    adminGroupId: adminGroupId
-    jumpboxIp: jumpbox.outputs.ip
-  }
-}
+#module aks './modules/aks/aks.bicep' = {
+#  name: 'aks'
+#  dependsOn: [
+#    spokevnet
+#    jumpbox
+#  ]
+#  params: {
+#    location: location
+#    aksSubnetId: spokevnet.outputs.aksSubnetId
+#    fwPublicIp: firewall.outputs.fwIp
+#    adminUsername: adminUsername
+#    sshKey: sshKey
+#    vnetId: spokevnet.outputs.vnetId
+#    adminGroupId: adminGroupId
+#    jumpboxIp: jumpbox.outputs.ip
+#  }
+#}
